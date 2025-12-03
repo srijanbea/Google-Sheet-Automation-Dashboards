@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Content Creators Dashboard (Sample)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e5edff 0, #f9fafb 60%);
+      color: #111827;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .app { width: 100%; max-width: 1100px; }
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.05);
+    }
+    h1 { font-size: 24px; letter-spacing: -0.03em; margin: 0 0 4px; }
+    .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 10px; }
+    .metric-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .metric {
+      flex: 1;
+      min-width: 150px;
+      background: linear-gradient(145deg, #ffffff, #eff6ff);
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+    }
+    .metric-label { font-size: 11px; color: #6b7280; }
+    .metric-value { font-size: 20px; font-weight: 700; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 700px;
+    }
+    th, td {
+      padding: 6px 8px;
+      white-space: nowrap;
+      text-align: left;
+    }
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+    tbody tr:nth-child(even) { background: #f9fafb; }
+    tbody tr:hover { background: #eff6ff; }
+    .status-pill {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid #d1d5db;
+    }
+    .status-completed { background:#dcfce7;border-color:#22c55e;color:#166534; }
+    .status-in-progress { background:#dbeafe;border-color:#60a5fa;color:#1d4ed8; }
+    .status-pending { background:#fef9c3;border-color:#eab308;color:#92400e; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="card">
+    <h1>Content Creators Dashboard (Sample)</h1>
+    <div class="subtitle">
+      Example dashboard reading from a Google Sheet via a JSON web app (Apps Script).
+    </div>
+    <div class="metric-row">
+      <div class="metric">
+        <div class="metric-label">Total Items</div>
+        <div class="metric-value" id="totalItems">–</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Completed</div>
+        <div class="metric-value" id="completedItems">–</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">In Progress</div>
+        <div class="metric-value" id="inProgressItems">–</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Pending</div>
+        <div class="metric-value" id="pendingItems">–</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <strong>Content Log</strong>
+      <span id="rowCount" style="font-size:12px;color:#6b7280;">Loading…</span>
+    </div>
+    <div style="overflow:auto;margin-top:8px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Creator</th>
+            <th>Video Type</th>
+            <th>Platform</th>
+            <th>Location</th>
+            <th>Topic</th>
+            <th>Script</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  // TODO: replace with your Apps Script web app URL
+  const API_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSk7Tc36tApMEh6AzZUHC34DBDGi5AWarASm0cA1CvDku6DiiWp77Kho_zvBY2nQTcAl9s678-BpQa4/pub?output=csv";
+
+  function statusClass(status) {
+    const s = (status || "").toLowerCase();
+    if (["completed","done","posted","published"].includes(s)) return "status-completed";
+    if (["in progress","draft","editing"].includes(s)) return "status-in-progress";
+    if (["pending","todo","backlog","not started"].includes(s)) return "status-pending";
+    return "";
+  }
+
+  function formatDate(val) {
+    if (!val) return "";
+    const d = new Date(val);
+    if (isNaN(d)) return val;
+    return d.toLocaleDateString(undefined, { day:"2-digit", month:"short", year:"2-digit" });
+  }
+
+  async function loadData() {
+    const res = await fetch(API_URL);
+    const json = await res.json();
+    const rows = json.rows || [];
+
+    // metrics
+    const total = rows.length;
+    let completed = 0, inProg = 0, pending = 0;
+    rows.forEach(r => {
+      const s = String(r.Status || "").toLowerCase();
+      if (["completed","done","posted","published"].includes(s)) completed++;
+      else if (["in progress","draft","editing"].includes(s)) inProg++;
+      else if (["pending","todo","backlog","not started"].includes(s)) pending++;
+    });
+
+    document.getElementById("totalItems").textContent = total;
+    document.getElementById("completedItems").textContent = completed;
+    document.getElementById("inProgressItems").textContent = inProg;
+    document.getElementById("pendingItems").textContent = pending;
+    document.getElementById("rowCount").textContent = `Showing ${rows.length} items`;
+
+    // table
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+    rows
+      .sort((a,b) => new Date(b.Date) - new Date(a.Date))
+      .forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${formatDate(r.Date)}</td>
+          <td>${r.Creator || ""}</td>
+          <td>${r["Video Type"] || ""}</td>
+          <td>${r.Platform || ""}</td>
+          <td>${r.Location || ""}</td>
+          <td>${r.Topic || ""}</td>
+          <td>${r.Script || ""}</td>
+          <td><span class="status-pill ${statusClass(r.Status)}">${r.Status || ""}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+  }
+
+  loadData().catch(err => {
+    console.error(err);
+    document.getElementById("rowCount").textContent = "Error loading data";
+  });
+</script>
+</body>
+</html>
