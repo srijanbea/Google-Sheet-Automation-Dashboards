@@ -502,7 +502,7 @@
       width: 100%;
       max-height: 360px;
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: auto; /* allow horizontal scroll on small screens */
     }
 
     table {
@@ -627,6 +627,73 @@
       margin-top: 8px;
       font-size: 12px;
       color: var(--danger);
+    }
+
+    /* Mobile-friendly Content Log (table as cards) */
+    @media (max-width: 700px) {
+      .card .card-header {
+        align-items: flex-start;
+      }
+
+      .table-wrap {
+        max-height: none;
+        border-radius: 14px;
+      }
+
+      table {
+        border-collapse: separate;
+        border-spacing: 0 6px;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody tr {
+        display: block;
+        background: #f9fafb;
+        margin: 0 8px 8px;
+        border-radius: 12px;
+        padding: 6px 8px;
+        box-shadow: 0 2px 6px rgba(15,23,42,0.04);
+      }
+
+      tbody tr:nth-child(even) {
+        background: #f9fafb;
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 4px 0;
+        font-size: 11px;
+        border-bottom: 0;
+      }
+
+      td:last-child {
+        margin-bottom: 0;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-right: 10px;
+        flex: 0 0 45%;
+        max-width: 45%;
+      }
+
+      td span.tag,
+      td span.status-pill {
+        white-space: nowrap;
+      }
+
+      .badge-soft {
+        font-size: 10px;
+      }
     }
   </style>
 </head>
@@ -1349,16 +1416,16 @@
       .forEach(row => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${formatDateDisplay(row.date)}</td>
-          <td>${row.creator || "-"}</td>
-          <td>${row.videoType || "-"}</td>
-          <td>${row.platform || "-"}</td>
-          <td>${row.location || "-"}</td>
-          <td>${row.topic || "-"}</td>
-          <td>
+          <td data-label="Date">${formatDateDisplay(row.date)}</td>
+          <td data-label="Creator">${row.creator || "-"}</td>
+          <td data-label="Video Type">${row.videoType || "-"}</td>
+          <td data-label="Platform">${row.platform || "-"}</td>
+          <td data-label="Location">${row.location || "-"}</td>
+          <td data-label="Topic">${row.topic || "-"}</td>
+          <td data-label="Script">
             <span class="tag">${(row.script || "").toString().toLowerCase() === "yes" ? "Script Ready" : (row.script || "-")}</span>
           </td>
-          <td>
+          <td data-label="Status">
             <span class="status-pill ${getStatusClass(row.status)}">${row.status || "-"}</span>
           </td>
         `;
