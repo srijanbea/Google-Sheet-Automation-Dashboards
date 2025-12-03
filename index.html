@@ -2,195 +2,1563 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Content Creators Dashboard (Sample)</title>
+  <title>Content Creators Monthly Dashboard</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
+    :root {
+      --bg: #f3f4f6;
+      --bg-soft: #e5e7eb;
+      --card: #ffffff;
+      --accent: #2563eb;
+      --accent-soft: rgba(37,99,235,0.08);
+      --accent-strong: #1d4ed8;
+      --text: #111827;
+      --muted: #6b7280;
+      --danger: #dc2626;
+      --border: #e5e7eb;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --shadow-soft: 0 18px 45px rgba(15,23,42,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
       background: radial-gradient(circle at top, #e5edff 0, #f9fafb 60%);
-      color: #111827;
-      margin: 0;
-      padding: 24px;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
       display: flex;
       justify-content: center;
     }
-    .app { width: 100%; max-width: 1100px; }
-    .card {
+
+    .app {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .shell {
+      background: linear-gradient(135deg, rgba(255,255,255,1), rgba(219,234,254,0.9));
+      border-radius: 32px;
+      padding: 2px;
+      box-shadow: var(--shadow-soft);
+      width: 100%;
+    }
+
+    .inner {
+      background: #f9fafb;
+      border-radius: 30px;
+      padding: 18px 18px 22px;
+      border: 1px solid rgba(148,163,184,0.3);
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      height: 34px;
+    }
+
+    .title-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    .title-chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.25);
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h1 span.highlight {
+      color: var(--accent-strong);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      font-size: 11px;
+      color: var(--accent-strong);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .pill-badge {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
       background: #ffffff;
+      color: var(--accent-strong);
+      border: 1px solid rgba(37,99,235,0.4);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding: 7px 28px 7px 11px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+    }
+
+    .select-wrapper select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    .select-wrapper::after {
+      content: "▾";
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-input {
+      padding: 7px 26px 7px 11px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      font-size: 12px;
+      outline: none;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+      min-width: 180px;
+    }
+
+    .search-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      width: 100%;
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      padding: 16px 16px 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(15,23,42,0.05);
+      width: 100%;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .badge-soft {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .metric {
+      background: linear-gradient(145deg, #ffffff, #eff6ff);
+      border-radius: 18px;
+      padding: 10px 11px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .metric-value {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: 2px;
+    }
+
+    .metric-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .metric-sub span {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #60a5fa, #22c55e);
+      transition: width 0.35s ease;
+    }
+
+    .target-row {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .target-row-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .target-row-main span.label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .target-row-main span.value {
+      font-weight: 600;
+      color: var(--accent-strong);
+    }
+
+    .target-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .target-input-wrap label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .target-input-wrap input {
+      width: 70px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      font-size: 11px;
+      outline: none;
+      background: #ffffff;
+    }
+
+    .target-input-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.18);
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 1100px) {
+      .chart-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .chart-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .chart-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .chart-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .summary-text {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 10px;
+      padding: 10px 11px;
+      border-radius: 14px;
+      background: #f3f4ff;
+      border: 1px dashed #c7d2fe;
+    }
+
+    .summary-text strong {
+      color: var(--accent-strong);
+    }
+
+    .side-card {
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      padding: 14px 14px 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(15,23,42,0.04);
+      width: 100%;
+    }
+
+    .list {
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 6px;
+      border-radius: 10px;
+      transition: background 0.15s ease, transform 0.12s ease;
+    }
+
+    .list-item:hover {
+      background: #eff6ff;
+      transform: translateY(-1px);
+    }
+
+    .list-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .list-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-strong);
+    }
+
+    .list-chip {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      color: var(--muted);
+      background: #f9fafb;
+    }
+
+    .table-wrap {
+      margin-top: 10px;
       border-radius: 18px;
       border: 1px solid #e5e7eb;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 10px 25px rgba(15,23,42,0.05);
+      background: #ffffff;
+      width: 100%;
+      max-height: 360px;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
-    h1 { font-size: 24px; letter-spacing: -0.03em; margin: 0 0 4px; }
-    .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 10px; }
-    .metric-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-    .metric {
-      flex: 1;
-      min-width: 150px;
-      background: linear-gradient(145deg, #ffffff, #eff6ff);
-      border-radius: 14px;
-      border: 1px solid #e5e7eb;
-      padding: 10px;
-    }
-    .metric-label { font-size: 11px; color: #6b7280; }
-    .metric-value { font-size: 20px; font-weight: 700; }
+
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
-      min-width: 700px;
     }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background: #f9fafb;
+      z-index: 2;
+    }
+
     th, td {
-      padding: 6px 8px;
-      white-space: nowrap;
+      padding: 7px 10px;
       text-align: left;
     }
+
     th {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: .12em;
-      color: #6b7280;
+      letter-spacing: 0.12em;
+      color: var(--muted);
       border-bottom: 1px solid #e5e7eb;
       background: #f9fafb;
+      white-space: nowrap;
     }
-    tbody tr:nth-child(even) { background: #f9fafb; }
-    tbody tr:hover { background: #eff6ff; }
+
+    td {
+      white-space: normal;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    tbody tr:hover {
+      background: #eff6ff;
+    }
+
     .status-pill {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid transparent;
+    }
+
+    .status-completed {
+      border-color: rgba(22,163,74,0.35);
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .status-in-progress {
+      border-color: rgba(37,99,235,0.35);
+      color: #1d4ed8;
+      background: #dbeafe;
+    }
+
+    .status-pending {
+      border-color: rgba(234,179,8,0.5);
+      color: #92400e;
+      background: #fef9c3;
+    }
+
+    .status-other {
+      border-color: #d1d5db;
+      color: var(--muted);
+      background: #f3f4f6;
+    }
+
+    .tag {
       display: inline-flex;
       padding: 2px 8px;
       border-radius: 999px;
       font-size: 11px;
-      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      color: var(--muted);
     }
-    .status-completed { background:#dcfce7;border-color:#22c55e;color:#166534; }
-    .status-in-progress { background:#dbeafe;border-color:#60a5fa;color:#1d4ed8; }
-    .status-pending { background:#fef9c3;border-color:#eab308;color:#92400e; }
+
+    .small {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .filter-chip {
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-size: 11px;
+      color: #4b5563;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+    }
+
+    .filter-chip:hover {
+      background: #eff6ff;
+      transform: translateY(-1px);
+    }
+
+    .filter-chip-active {
+      background: #1d4ed8;
+      color: #ffffff;
+      border-color: #1d4ed8;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.24);
+    }
+
+    .error {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--danger);
+    }
   </style>
 </head>
 <body>
 <div class="app">
-  <div class="card">
-    <h1>Content Creators Dashboard (Sample)</h1>
-    <div class="subtitle">
-      Example dashboard reading from a Google Sheet via a JSON web app (Apps Script).
-    </div>
-    <div class="metric-row">
-      <div class="metric">
-        <div class="metric-label">Total Items</div>
-        <div class="metric-value" id="totalItems">–</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Completed</div>
-        <div class="metric-value" id="completedItems">–</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">In Progress</div>
-        <div class="metric-value" id="inProgressItems">–</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Pending</div>
-        <div class="metric-value" id="pendingItems">–</div>
-      </div>
-    </div>
-  </div>
+  <div class="shell">
+    <div class="inner">
+      <header>
+        <div class="title-block">
+          <div class="brand-row">
+            <img src="https://cdn.prod.website-files.com/67076f718690cbc6a7e9014c/68b541e62bb82a30cbcbe753_logo-global.svg"
+                 alt="Global Select Logo" class="logo" />
+            <div>
+              <div class="title-chip">
+                <span class="title-chip-dot"></span>
+                Content Production Overview
+              </div>
+            </div>
+          </div>
+          <h1>
+            Creator Productivity
+            <span class="highlight">Dashboard</span>
+          </h1>
+          <p class="subtitle">
+            Live snapshot of how much your creators ship each month across all platforms.
+          </p>
+        </div>
+        <div class="control-row">
+          <div class="pill">
+            <span>Creators tracked</span>
+            <span class="pill-badge" id="creatorCountBadge">–</span>
+          </div>
+          <div class="filters">
+            <div class="select-wrapper">
+              <select id="monthFilter"></select>
+            </div>
+            <div class="select-wrapper">
+              <select id="creatorFilter"></select>
+            </div>
+            <div class="select-wrapper">
+              <select id="statusFilter">
+                <option value="">All Status</option>
+                <option value="completed">Completed</option>
+                <option value="in-progress">In Progress</option>
+                <option value="pending">Pending</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="search-wrapper">
+              <input
+                id="searchFilter"
+                class="search-input"
+                type="text"
+                placeholder="Search topic, platform, creator..."
+              />
+              <span class="search-icon">🔍</span>
+            </div>
+          </div>
+        </div>
+      </header>
 
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <strong>Content Log</strong>
-      <span id="rowCount" style="font-size:12px;color:#6b7280;">Loading…</span>
-    </div>
-    <div style="overflow:auto;margin-top:8px;">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Creator</th>
-            <th>Video Type</th>
-            <th>Platform</th>
-            <th>Location</th>
-            <th>Topic</th>
-            <th>Script</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+      <main>
+        <!-- Left: main metrics, charts & table -->
+        <section>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Key Metrics</div>
+              <div class="badge-soft" id="currentMonthLabel">Month: –</div>
+            </div>
+            <div class="summary-grid">
+              <div class="metric">
+                <div class="metric-label">Total Items</div>
+                <div class="metric-value" id="totalItems">–</div>
+                <div class="metric-sub">
+                  <span id="totalItemsPerDay">–</span> per day avg
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="totalItemsBar"></div>
+                </div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Completed</div>
+                <div class="metric-value" id="completedItems">–</div>
+                <div class="metric-sub">
+                  <span id="completedPct">–%</span> of total
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="completedBar"></div>
+                </div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">In Progress</div>
+                <div class="metric-value" id="inProgressItems">–</div>
+                <div class="metric-sub">
+                  <span id="inProgressPct">–%</span> of total
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="inProgressBar"></div>
+                </div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Pending / Backlog</div>
+                <div class="metric-value" id="pendingItems">–</div>
+                <div class="metric-sub">
+                  <span id="pendingPct">–%</span> of total
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="pendingBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Target / Productivity row -->
+            <div class="target-row">
+              <div class="target-row-main">
+                <span class="label">Monthly target</span>
+                <span class="value" id="targetSummary">–</span>
+              </div>
+              <div class="target-input-wrap">
+                <label for="targetInput">Set target</label>
+                <input id="targetInput" type="number" min="1" step="1" value="60" />
+              </div>
+            </div>
+
+            <p class="small">
+              Tip: Keep “Status” consistent in the sheet (e.g. <strong>Completed</strong>, <strong>In Progress</strong>, <strong>Pending</strong>)
+              so these cards and charts stay clean.
+            </p>
+            <p class="small" id="consistencyText"></p>
+
+            <!-- Charts -->
+            <div class="chart-grid">
+              <div class="chart-card">
+                <div class="chart-title">Items per Creator</div>
+                <canvas id="creatorChart"></canvas>
+              </div>
+              <div class="chart-card">
+                <div class="chart-title">Items per Platform</div>
+                <canvas id="platformChart"></canvas>
+              </div>
+              <div class="chart-card">
+                <div class="chart-title">Items by Content Type</div>
+                <canvas id="typeChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Auto summary -->
+            <div class="summary-text" id="autoSummary">
+              Select a month and filters to see a quick summary of this view.
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 14px;">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Content Log</div>
+                <div class="chip-row" id="platformChipRow"></div>
+              </div>
+              <div class="badge-soft">
+                Showing <span id="rowCount">–</span> items
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Creator</th>
+                  <th>Video Type</th>
+                  <th>Platform</th>
+                  <th>Location</th>
+                  <th>Topic</th>
+                  <th>Script</th>
+                  <th>Status</th>
+                </tr>
+                </thead>
+                <tbody id="tableBody">
+                <!-- rows injected here -->
+                </tbody>
+              </table>
+            </div>
+            <div id="errorMsg" class="error" style="display:none;"></div>
+          </div>
+        </section>
+
+        <!-- Right: per-creator and status/platform lists -->
+        <section>
+          <div class="side-card">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Creator Breakdown</div>
+              <div class="badge-soft">by items completed</div>
+            </div>
+            <ul class="list" id="creatorStats"></ul>
+          </div>
+
+          <div class="side-card" style="margin-top:12px;">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Status & Platforms</div>
+            </div>
+            <ul class="list" id="statusStats"></ul>
+            <ul class="list" id="platformStats" style="margin-top:6px; border-top:1px solid #e5e7eb; padding-top:4px;"></ul>
+          </div>
+        </section>
+      </main>
     </div>
   </div>
 </div>
 
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-  // TODO: replace with your Apps Script web app URL
-  const API_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSk7Tc36tApMEh6AzZUHC34DBDGi5AWarASm0cA1CvDku6DiiWp77Kho_zvBY2nQTcAl9s678-BpQa4/pub?output=csv";
+  // === CONFIG – YOUR SHEET IS WIRED HERE ===
+  const SHEET_ID = "18wIazB6wExNteYnsUrkTwzQuO40QIYdvKamdlGNalec";
+  const SHEET_NAME = "ContentTracker";
+  // =========================================
 
-  function statusClass(status) {
-    const s = (status || "").toLowerCase();
-    if (["completed","done","posted","published"].includes(s)) return "status-completed";
-    if (["in progress","draft","editing"].includes(s)) return "status-in-progress";
-    if (["pending","todo","backlog","not started"].includes(s)) return "status-pending";
-    return "";
+  const SHEET_URL =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
+
+  let allData = [];
+  let months = [];
+  let creators = [];
+  let searchTerm = "";
+  let selectedPlatform = ""; // for platform chips
+  let monthlyTarget = 60;
+
+  let creatorChartInstance = null;
+  let platformChartInstance = null;
+  let typeChartInstance = null;
+
+  const COMPLETED_STATUSES = ["completed", "done", "published", "posted"];
+  const INPROGRESS_STATUSES = ["in progress", "draft", "editing"];
+  const PENDING_STATUSES = ["pending", "todo", "backlog", "not started"];
+
+  function parseGoogleDate(value) {
+    if (!value) return null;
+    if (typeof value === "string" && value.startsWith("Date(")) {
+      const parts = value.slice(5, -1).split(",").map(Number);
+      const [y, m, d, hh = 0, mm = 0, ss = 0] = parts;
+      return new Date(y, m, d, hh, mm, ss);
+    }
+    return new Date(value);
   }
 
-  function formatDate(val) {
-    if (!val) return "";
-    const d = new Date(val);
-    if (isNaN(d)) return val;
-    return d.toLocaleDateString(undefined, { day:"2-digit", month:"short", year:"2-digit" });
+  async function fetchSheetData() {
+    try {
+      const res = await fetch(SHEET_URL);
+      const text = await res.text();
+
+      const jsonStr = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+      const parsed = JSON.parse(jsonStr);
+
+      const table = parsed.table;
+      const rows = table.rows || [];
+      const data = [];
+
+      for (const row of rows) {
+        const c = row.c || [];
+        // Columns: Date, Video Type, Location, Topic, Script, Platform, Status, Creator
+        const rawDate = c[0]?.v;
+        if (!rawDate) continue;
+
+        const date = parseGoogleDate(rawDate);
+        if (isNaN(date)) continue;
+
+        data.push({
+          date,
+          videoType: (c[1]?.v ?? "").toString(),
+          location: (c[2]?.v ?? "").toString(),
+          topic: (c[3]?.v ?? "").toString(),
+          script: (c[4]?.v ?? "").toString(),
+          platform: (c[5]?.v ?? "").toString(),
+          status: (c[6]?.v ?? "").toString(),
+          creator: (c[7]?.v ?? "Unassigned").toString()
+        });
+      }
+      return data;
+    } catch (err) {
+      console.error("Error loading sheet:", err);
+      showError("Could not load data from Google Sheets. Check Sheet ID, Sheet Name and public access.");
+      return [];
+    }
   }
 
-  async function loadData() {
-    const res = await fetch(API_URL);
-    const json = await res.json();
-    const rows = json.rows || [];
+  function getMonthKey(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    return `${y}-${m}`;
+  }
 
-    // metrics
-    const total = rows.length;
-    let completed = 0, inProg = 0, pending = 0;
-    rows.forEach(r => {
-      const s = String(r.Status || "").toLowerCase();
-      if (["completed","done","posted","published"].includes(s)) completed++;
-      else if (["in progress","draft","editing"].includes(s)) inProg++;
-      else if (["pending","todo","backlog","not started"].includes(s)) pending++;
+  function formatMonthLabelFromKey(key) {
+    const [y, m] = key.split("-").map(Number);
+    const dt = new Date(y, m - 1, 1);
+    return dt.toLocaleString(undefined, { month: "short", year: "numeric" });
+  }
+
+  function normalizeStatus(status) {
+    return (status || "").toLowerCase().trim();
+  }
+
+  function statusMatchesFilter(rowStatus, filterValue) {
+    const s = normalizeStatus(rowStatus);
+    if (!filterValue) return true;
+
+    if (filterValue === "completed") {
+      return COMPLETED_STATUSES.includes(s);
+    }
+    if (filterValue === "in-progress") {
+      return INPROGRESS_STATUSES.includes(s);
+    }
+    if (filterValue === "pending") {
+      return PENDING_STATUSES.includes(s);
+    }
+    if (filterValue === "other") {
+      return !COMPLETED_STATUSES.includes(s) &&
+             !INPROGRESS_STATUSES.includes(s) &&
+             !PENDING_STATUSES.includes(s);
+    }
+    return true;
+  }
+
+  function buildFilters() {
+    const monthFilter = document.getElementById("monthFilter");
+    const creatorFilter = document.getElementById("creatorFilter");
+    const creatorCountBadge = document.getElementById("creatorCountBadge");
+    const statusFilter = document.getElementById("statusFilter");
+    const searchFilter = document.getElementById("searchFilter");
+    const targetInput = document.getElementById("targetInput");
+
+    const monthSet = new Set();
+    const creatorSet = new Set();
+    const platformSet = new Set();
+
+    allData.forEach(row => {
+      monthSet.add(getMonthKey(row.date));
+      if (row.creator) creatorSet.add(row.creator);
+      const p = row.platform || "Unassigned";
+      platformSet.add(p);
     });
 
-    document.getElementById("totalItems").textContent = total;
-    document.getElementById("completedItems").textContent = completed;
-    document.getElementById("inProgressItems").textContent = inProg;
-    document.getElementById("pendingItems").textContent = pending;
-    document.getElementById("rowCount").textContent = `Showing ${rows.length} items`;
+    months = Array.from(monthSet).sort();
+    creators = Array.from(creatorSet).sort();
+    const platforms = Array.from(platformSet).sort();
 
-    // table
+    // Month dropdown
+    monthFilter.innerHTML = "";
+    months.forEach((key, idx) => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = formatMonthLabelFromKey(key);
+      if (idx === months.length - 1) opt.selected = true;
+      monthFilter.appendChild(opt);
+    });
+
+    // Creator dropdown
+    creatorFilter.innerHTML = "";
+    const allOpt = document.createElement("option");
+    allOpt.value = "";
+    allOpt.textContent = "All Creators";
+    creatorFilter.appendChild(allOpt);
+
+    creators.forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      creatorFilter.appendChild(opt);
+    });
+
+    creatorCountBadge.textContent = creators.length.toString() || "0";
+
+    monthFilter.addEventListener("change", renderDashboard);
+    creatorFilter.addEventListener("change", renderDashboard);
+    statusFilter.addEventListener("change", renderDashboard);
+
+    searchFilter.addEventListener("input", (e) => {
+      searchTerm = (e.target.value || "").toLowerCase().trim();
+      renderDashboard();
+    });
+
+    targetInput.addEventListener("input", (e) => {
+      const val = Number(e.target.value);
+      if (!isNaN(val) && val > 0) {
+        monthlyTarget = val;
+        renderDashboard();
+      }
+    });
+
+    buildPlatformChips(platforms);
+  }
+
+  function buildPlatformChips(platforms) {
+    const container = document.getElementById("platformChipRow");
+    container.innerHTML = "";
+
+    function addChip(label, value) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "filter-chip" + (selectedPlatform === value ? " filter-chip-active" : "");
+      chip.textContent = label;
+      chip.addEventListener("click", () => {
+        selectedPlatform = value;
+        // re-render chip active states
+        buildPlatformChips(platforms);
+        renderDashboard();
+      });
+      container.appendChild(chip);
+    }
+
+    addChip("All platforms", "");
+
+    platforms.forEach(p => {
+      addChip(p, p);
+    });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById("errorMsg");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  function clearError() {
+    const el = document.getElementById("errorMsg");
+    el.textContent = "";
+    el.style.display = "none";
+  }
+
+  function renderDashboard() {
+    clearError();
+
+    if (!allData.length || !months.length) {
+      showError("No rows found. Make sure your sheet has data and the correct columns.");
+      return;
+    }
+
+    const monthFilter = document.getElementById("monthFilter");
+    const creatorFilter = document.getElementById("creatorFilter");
+    const statusFilter = document.getElementById("statusFilter");
+
+    const monthKey = monthFilter.value || months[months.length - 1];
+    const creator = creatorFilter.value;
+    const statusFilterVal = statusFilter.value;
+
+    const monthLabel = formatMonthLabelFromKey(monthKey);
+    document.getElementById("currentMonthLabel").textContent = `Month: ${monthLabel}`;
+
+    const filtered = allData.filter(row => {
+      const sameMonth = getMonthKey(row.date) === monthKey;
+      const sameCreator = !creator || row.creator === creator;
+
+      const platformLabel = row.platform || "Unassigned";
+      const matchesPlatform = !selectedPlatform || platformLabel === selectedPlatform;
+
+      const textToSearch = [
+        row.topic,
+        row.platform,
+        row.location,
+        row.videoType,
+        row.creator,
+        row.status
+      ].join(" ").toLowerCase();
+
+      const matchesSearch = !searchTerm || textToSearch.includes(searchTerm);
+      const matchesStatus = statusMatchesFilter(row.status, statusFilterVal);
+
+      return sameMonth && sameCreator && matchesSearch && matchesStatus && matchesPlatform;
+    });
+
+    updateSummaryCards(filtered, monthKey);
+    updateCreatorStats(filtered);
+    updateStatusPlatformStats(filtered);
+    updateTable(filtered);
+    updateCharts(filtered);
+    updateSummaryText(filtered, {
+      monthLabel,
+      creator,
+      statusFilterVal,
+      platformLabel: selectedPlatform
+    });
+  }
+
+  function updateSummaryCards(data, monthKey) {
+    const totalItems = data.length;
+
+    let completed = 0;
+    let inProgress = 0;
+    let pending = 0;
+
+    data.forEach(row => {
+      const status = normalizeStatus(row.status);
+      if (COMPLETED_STATUSES.includes(status)) completed++;
+      else if (INPROGRESS_STATUSES.includes(status)) inProgress++;
+      else if (PENDING_STATUSES.includes(status)) pending++;
+    });
+
+    const totalElem = document.getElementById("totalItems");
+    const totalItemsPerDayElem = document.getElementById("totalItemsPerDay");
+    const completedElem = document.getElementById("completedItems");
+    const inProgressElem = document.getElementById("inProgressItems");
+    const pendingElem = document.getElementById("pendingItems");
+    const completedPctElem = document.getElementById("completedPct");
+    const inProgressPctElem = document.getElementById("inProgressPct");
+    const pendingPctElem = document.getElementById("pendingPct");
+
+    totalElem.textContent = totalItems.toString();
+    completedElem.textContent = completed.toString();
+    inProgressElem.textContent = inProgress.toString();
+    pendingElem.textContent = pending.toString();
+
+    const totalPctBase = totalItems || 1;
+    const completedPct = Math.round((completed / totalPctBase) * 100);
+    const inProgressPct = Math.round((inProgress / totalPctBase) * 100);
+    const pendingPct = Math.round((pending / totalPctBase) * 100);
+
+    completedPctElem.textContent = `${completedPct}%`;
+    inProgressPctElem.textContent = `${inProgressPct}%`;
+    pendingPctElem.textContent = `${pendingPct}%`;
+
+    const [y, m] = monthKey.split("-").map(Number);
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const perDay = totalItems ? (totalItems / daysInMonth) : 0;
+    totalItemsPerDayElem.textContent = perDay.toFixed(1);
+
+    // Target summary & bar
+    updateTargetSummary(totalItems, daysInMonth);
+
+    const totalBar = document.getElementById("totalItemsBar");
+    const completedBar = document.getElementById("completedBar");
+    const inProgressBar = document.getElementById("inProgressBar");
+    const pendingBar = document.getElementById("pendingBar");
+
+    const targetBase = monthlyTarget || 1;
+    const totalRatio = Math.min(1, totalItems / targetBase);
+    totalBar.style.width = (totalRatio * 100) + "%";
+    completedBar.style.width = completedPct + "%";
+    inProgressBar.style.width = inProgressPct + "%";
+    pendingBar.style.width = pendingPct + "%";
+
+    // Consistency metrics
+    updateConsistencyText(data, daysInMonth);
+  }
+
+  function updateTargetSummary(totalItems, daysInMonth) {
+    const targetSummary = document.getElementById("targetSummary");
+    const remaining = Math.max(0, monthlyTarget - totalItems);
+    const pct = monthlyTarget ? Math.round((totalItems / monthlyTarget) * 100) : 0;
+
+    const today = new Date();
+    const currentDay = today.getDate();
+    const remainingDays = Math.max(0, daysInMonth - currentDay + 1);
+    const neededPerDay = remainingDays > 0 ? (remaining / remainingDays) : remaining;
+
+    targetSummary.textContent =
+      `${totalItems}/${monthlyTarget} items • ${pct}% reached • ${remaining} left (${neededPerDay.toFixed(1)}/day needed)`;
+  }
+
+  function updateConsistencyText(data, daysInMonth) {
+    const el = document.getElementById("consistencyText");
+    if (!data.length) {
+      el.textContent = "No activity recorded for this month in the current view.";
+      return;
+    }
+
+    const daySet = new Set();
+    data.forEach(row => {
+      daySet.add(row.date.getDate());
+    });
+
+    const postingDays = daySet.size;
+
+    // Compute longest streak of consecutive days with items
+    const daysSorted = Array.from(daySet).sort((a, b) => a - b);
+    let longest = 0;
+    let current = 0;
+    let prev = null;
+
+    daysSorted.forEach(d => {
+      if (prev === null || d === prev + 1) {
+        current++;
+      } else {
+        current = 1;
+      }
+      if (current > longest) longest = current;
+      prev = d;
+    });
+
+    el.textContent =
+      `Consistency: content on ${postingDays}/${daysInMonth} days • longest streak ${longest} day${longest !== 1 ? "s" : ""} in a row.`;
+  }
+
+  function updateCreatorStats(data) {
+    const container = document.getElementById("creatorStats");
+    container.innerHTML = "";
+
+    const counts = {};
+    data.forEach(row => {
+      const name = row.creator || "Unassigned";
+      if (!counts[name]) counts[name] = 0;
+      const status = normalizeStatus(row.status);
+      if (COMPLETED_STATUSES.includes(status)) {
+        counts[name]++;
+      }
+    });
+
+    const totalCompleted = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+
+    const sorted = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1]);
+
+    if (!sorted.length) {
+      const li = document.createElement("li");
+      li.className = "list-item";
+      li.innerHTML = `<span class="list-label">No completed items in this view.</span>`;
+      container.appendChild(li);
+      return;
+    }
+
+    sorted.forEach(([name, count]) => {
+      const pct = Math.round((count / totalCompleted) * 100);
+      const li = document.createElement("li");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div>
+          <div class="list-label">${name}</div>
+          <div class="small">${pct}% of completed this month</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="list-count">${count}</span>
+          <span class="list-chip">items</span>
+        </div>
+      `;
+      container.appendChild(li);
+    });
+  }
+
+  function updateStatusPlatformStats(data) {
+    const statusContainer = document.getElementById("statusStats");
+    const platformContainer = document.getElementById("platformStats");
+    statusContainer.innerHTML = "";
+    platformContainer.innerHTML = "";
+
+    const statusCounts = {};
+    const platformCounts = {};
+
+    data.forEach(row => {
+      const status = row.status || "Unknown";
+      const platform = row.platform || "Unassigned";
+
+      statusCounts[status] = (statusCounts[status] || 0) + 1;
+      platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+    });
+
+    const total = data.length || 1;
+
+    Object.entries(statusCounts)
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([status, count]) => {
+        const pct = Math.round((count / total) * 100);
+        const li = document.createElement("li");
+        li.className = "list-item";
+        li.innerHTML = `
+          <div>
+            <div class="list-label">${status}</div>
+            <div class="small">${pct}% of items</div>
+          </div>
+          <span class="list-count">${count}</span>
+        `;
+        statusContainer.appendChild(li);
+      });
+
+    Object.entries(platformCounts)
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([platform, count]) => {
+        const pct = Math.round((count / total) * 100);
+        const li = document.createElement("li");
+        li.className = "list-item";
+        li.innerHTML = `
+          <div>
+            <div class="list-label">${platform}</div>
+            <div class="small">${pct}% of items</div>
+          </div>
+          <span class="list-count">${count}</span>
+        `;
+        platformContainer.appendChild(li);
+      });
+  }
+
+  function formatDateDisplay(date) {
+    return date.toLocaleDateString(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit"
+    });
+  }
+
+  function getStatusClass(status) {
+    const s = normalizeStatus(status);
+    if (COMPLETED_STATUSES.includes(s)) return "status-completed";
+    if (INPROGRESS_STATUSES.includes(s)) return "status-in-progress";
+    if (PENDING_STATUSES.includes(s)) return "status-pending";
+    return "status-other";
+  }
+
+  function updateTable(data) {
     const tbody = document.getElementById("tableBody");
+    const rowCount = document.getElementById("rowCount");
     tbody.innerHTML = "";
-    rows
-      .sort((a,b) => new Date(b.Date) - new Date(a.Date))
-      .forEach(r => {
+    rowCount.textContent = data.length.toString();
+
+    if (!data.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="8" style="text-align:center;color:#9ca3af;padding:14px;">No items match this view.</td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
+    data
+      .sort((a, b) => b.date - a.date)
+      .forEach(row => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${formatDate(r.Date)}</td>
-          <td>${r.Creator || ""}</td>
-          <td>${r["Video Type"] || ""}</td>
-          <td>${r.Platform || ""}</td>
-          <td>${r.Location || ""}</td>
-          <td>${r.Topic || ""}</td>
-          <td>${r.Script || ""}</td>
-          <td><span class="status-pill ${statusClass(r.Status)}">${r.Status || ""}</span></td>
+          <td>${formatDateDisplay(row.date)}</td>
+          <td>${row.creator || "-"}</td>
+          <td>${row.videoType || "-"}</td>
+          <td>${row.platform || "-"}</td>
+          <td>${row.location || "-"}</td>
+          <td>${row.topic || "-"}</td>
+          <td>
+            <span class="tag">${(row.script || "").toString().toLowerCase() === "yes" ? "Script Ready" : (row.script || "-")}</span>
+          </td>
+          <td>
+            <span class="status-pill ${getStatusClass(row.status)}">${row.status || "-"}</span>
+          </td>
         `;
         tbody.appendChild(tr);
       });
   }
 
-  loadData().catch(err => {
-    console.error(err);
-    document.getElementById("rowCount").textContent = "Error loading data";
-  });
+  function updateCharts(data) {
+    const creatorCounts = {};
+    const platformCounts = {};
+    const typeCounts = {};
+
+    data.forEach(row => {
+      const creator = row.creator || "Unassigned";
+      const platform = row.platform || "Unassigned";
+      const type = row.videoType || "Other";
+
+      creatorCounts[creator] = (creatorCounts[creator] || 0) + 1;
+      platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+      typeCounts[type] = (typeCounts[type] || 0) + 1;
+    });
+
+    const creatorLabels = Object.keys(creatorCounts);
+    const creatorValues = Object.values(creatorCounts);
+
+    const platformLabels = Object.keys(platformCounts);
+    const platformValues = Object.values(platformCounts);
+
+    const typeLabels = Object.keys(typeCounts);
+    const typeValues = Object.values(typeCounts);
+
+    const creatorCtx = document.getElementById("creatorChart").getContext("2d");
+    const platformCtx = document.getElementById("platformChart").getContext("2d");
+    const typeCtx = document.getElementById("typeChart").getContext("2d");
+
+    // Creator chart
+    if (!creatorChartInstance) {
+      creatorChartInstance = new Chart(creatorCtx, {
+        type: "bar",
+        data: {
+          labels: creatorLabels,
+          datasets: [{
+            label: "Items",
+            data: creatorValues,
+            borderWidth: 1,
+            backgroundColor: "rgba(37,99,235,0.25)",
+            borderColor: "rgba(37,99,235,0.9)"
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    } else {
+      creatorChartInstance.data.labels = creatorLabels;
+      creatorChartInstance.data.datasets[0].data = creatorValues;
+      creatorChartInstance.update();
+    }
+
+    // Platform chart
+    if (!platformChartInstance) {
+      platformChartInstance = new Chart(platformCtx, {
+        type: "bar",
+        data: {
+          labels: platformLabels,
+          datasets: [{
+            label: "Items",
+            data: platformValues,
+            borderWidth: 1,
+            backgroundColor: "rgba(16,185,129,0.25)",
+            borderColor: "rgba(5,150,105,0.9)"
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    } else {
+      platformChartInstance.data.labels = platformLabels;
+      platformChartInstance.data.datasets[0].data = platformValues;
+      platformChartInstance.update();
+    }
+
+    // Type chart
+    if (!typeChartInstance) {
+      typeChartInstance = new Chart(typeCtx, {
+        type: "bar",
+        data: {
+          labels: typeLabels,
+          datasets: [{
+            label: "Items",
+            data: typeValues,
+            borderWidth: 1,
+            backgroundColor: "rgba(129,140,248,0.25)",
+            borderColor: "rgba(79,70,229,0.9)"
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    } else {
+      typeChartInstance.data.labels = typeLabels;
+      typeChartInstance.data.datasets[0].data = typeValues;
+      typeChartInstance.update();
+    }
+  }
+
+  function getStatusFilterLabel(val) {
+    if (!val) return "all statuses";
+    if (val === "completed") return "completed items only";
+    if (val === "in-progress") return "in-progress items only";
+    if (val === "pending") return "pending/backlog items only";
+    if (val === "other") return "items with other statuses";
+    return "all statuses";
+  }
+
+  function updateSummaryText(data, context) {
+    const el = document.getElementById("autoSummary");
+    if (!data.length) {
+      el.textContent = "No content found for this combination of month and filters.";
+      return;
+    }
+
+    const { monthLabel, creator, statusFilterVal, platformLabel } = context;
+
+    const totalItems = data.length;
+    let completed = 0;
+    let inProgress = 0;
+    let pending = 0;
+
+    const platformCounts = {};
+    const topicCounts = {};
+
+    data.forEach(row => {
+      const status = normalizeStatus(row.status);
+      if (COMPLETED_STATUSES.includes(status)) completed++;
+      else if (INPROGRESS_STATUSES.includes(status)) inProgress++;
+      else if (PENDING_STATUSES.includes(status)) pending++;
+
+      const platform = row.platform || "Unassigned";
+      platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+
+      const topicKey = row.topic || "Unspecified topic";
+      topicCounts[topicKey] = (topicCounts[topicKey] || 0) + 1;
+    });
+
+    const completedPct = Math.round((completed / (totalItems || 1)) * 100);
+
+    const mainPlatform = Object.entries(platformCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const topTopic = Object.entries(topicCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+
+    const creatorText = creator ? ` for <strong>${creator}</strong>` : "";
+    const statusText = getStatusFilterLabel(statusFilterVal);
+    const platformText = platformLabel ? ` on <strong>${platformLabel}</strong>` : (mainPlatform ? `, mostly on <strong>${mainPlatform}</strong>` : "");
+    const topicText = topTopic ? ` Top topic in this view is <strong>${topTopic}</strong>.` : "";
+
+    el.innerHTML =
+      `In <strong>${monthLabel}</strong>${creatorText}, you have <strong>${totalItems}</strong> items in this view, with ` +
+      `<strong>${completed}</strong> completed (${completedPct}% of the total). ` +
+      `Filters are showing <strong>${statusText}</strong>${platformText}.` +
+      topicText;
+  }
+
+  async function init() {
+    allData = await fetchSheetData();
+    if (!allData.length) return;
+    buildFilters();
+    renderDashboard();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
 </html>
