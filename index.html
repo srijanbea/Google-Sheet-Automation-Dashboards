@@ -585,6 +585,7 @@
       background: #f3f4f6;
       border: 1px solid #e5e7eb;
       color: var(--muted);
+      text-decoration: none;
     }
 
     .small {
@@ -687,6 +688,7 @@
       }
 
       td span.tag,
+      td a.tag,
       td span.status-pill {
         white-space: nowrap;
       }
@@ -1398,6 +1400,7 @@
     return "status-other";
   }
 
+  // UPDATED: clickable Script links + mobile data-labels
   function updateTable(data) {
     const tbody = document.getElementById("tableBody");
     const rowCount = document.getElementById("rowCount");
@@ -1411,10 +1414,37 @@
       return;
     }
 
+    // helper: build clickable script cell content
+    function buildScriptCell(scriptValue) {
+      const raw = (scriptValue || "").toString().trim();
+      if (!raw) {
+        return `<span class="tag">-</span>`;
+      }
+
+      // If it's a URL (or contains a URL), make it clickable
+      const urlMatch = raw.match(/https?:\/\/\S+/);
+      if (urlMatch) {
+        const href = urlMatch[0];
+        const display =
+          raw.length > 60 ? raw.slice(0, 57) + "…" : raw; // truncate a bit for UI
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="tag">${display}</a>`;
+      }
+
+      // If they just put "Yes" in the sheet
+      if (raw.toLowerCase() === "yes") {
+        return `<span class="tag">Script Ready</span>`;
+      }
+
+      // Fallback: plain text tag
+      return `<span class="tag">${raw}</span>`;
+    }
+
     data
       .sort((a, b) => b.date - a.date)
       .forEach(row => {
         const tr = document.createElement("tr");
+        const scriptCellHtml = buildScriptCell(row.script);
+
         tr.innerHTML = `
           <td data-label="Date">${formatDateDisplay(row.date)}</td>
           <td data-label="Creator">${row.creator || "-"}</td>
@@ -1423,7 +1453,7 @@
           <td data-label="Location">${row.location || "-"}</td>
           <td data-label="Topic">${row.topic || "-"}</td>
           <td data-label="Script">
-            <span class="tag">${(row.script || "").toString().toLowerCase() === "yes" ? "Script Ready" : (row.script || "-")}</span>
+            ${scriptCellHtml}
           </td>
           <td data-label="Status">
             <span class="status-pill ${getStatusClass(row.status)}">${row.status || "-"}</span>
