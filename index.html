@@ -2,69 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Content Creators Monthly Dashboard</title>
+  <title>Creator Productivity Dashboard</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root {
-      --bg: #f3f4f6;
-      --bg-soft: #e5e7eb;
-      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: rgba(148,163,184,0.35);
       --accent: #2563eb;
-      --accent-soft: rgba(37,99,235,0.08);
-      --accent-strong: #1d4ed8;
-      --text: #111827;
-      --muted: #6b7280;
-      --danger: #dc2626;
-      --border: #e5e7eb;
-      --radius-lg: 16px;
-      --radius-xl: 22px;
-      --shadow-soft: 0 18px 45px rgba(15,23,42,0.08);
+      --accent2: #7c3aed;
+
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --info: #60a5fa;
+
+      --shadow: 0 18px 50px rgba(2,6,23,0.10);
+      --shadow2: 0 10px 30px rgba(2,6,23,0.06);
+
+      --r-xl: 22px;
+      --r-lg: 18px;
+
+      --ring: 0 0 0 3px rgba(37,99,235,0.18);
+      --ring2: 0 0 0 2px rgba(124,58,237,0.16);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    button, input, select { font: inherit; }
+    html, body { height: 100%; width: 100%; }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #e5edff 0, #f9fafb 60%);
+      background:
+        radial-gradient(1200px 600px at 10% 0%, #dbeafe 0%, rgba(219,234,254,0) 60%),
+        radial-gradient(900px 500px at 90% 10%, #ede9fe 0%, rgba(237,233,254,0) 55%),
+        linear-gradient(180deg, #f8fafc 0%, #f3f4f6 100%);
       color: var(--text);
       min-height: 100vh;
       padding: 16px;
-      display: flex;
-      justify-content: center;
     }
 
-    .app { width: 100%; max-width: 100%; }
+    /* ✅ FIX: Full width container, centered content, safe padding */
+    .app {
+      width: min(1400px, calc(100vw - 32px));
+      margin: 0 auto;
+    }
 
+    /* ✅ FIX: shell no longer forces weird max-width issues */
     .shell {
-      background: linear-gradient(135deg, rgba(255,255,255,1), rgba(219,234,254,0.9));
-      border-radius: 32px;
+      border-radius: 28px;
       padding: 2px;
-      box-shadow: var(--shadow-soft);
+      background: linear-gradient(135deg, rgba(255,255,255,1), rgba(219,234,254,0.9));
+      box-shadow: var(--shadow);
       width: 100%;
     }
 
     .inner {
-      background: #f9fafb;
-      border-radius: 30px;
+      background: rgba(248,250,252,0.92);
+      border-radius: 26px;
       padding: 18px 18px 22px;
-      border: 1px solid rgba(148,163,184,0.3);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      width: 100%;
+      overflow: hidden; /* ✅ FIX: prevent horizontal overflow from charts/tables */
     }
 
     header {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
+      gap: 14px;
       align-items: center;
+      margin-bottom: 16px;
       width: 100%;
     }
 
-    .title-block { display: flex; flex-direction: column; gap: 8px; }
-
-    .brand-row { display: flex; align-items: center; gap: 12px; }
-
-    .logo { height: 34px; }
+    .title-block { display: flex; flex-direction: column; gap: 10px; min-width: 260px; }
+    .brand-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .logo { height: 34px; filter: drop-shadow(0 8px 14px rgba(2,6,23,0.08)); }
 
     .title-chip {
       display: inline-flex;
@@ -73,34 +88,44 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 999px;
-      background: #eef2ff;
-      border: 1px solid #c7d2fe;
-      color: var(--accent-strong);
-      font-weight: 600;
+      background: rgba(37,99,235,0.08);
+      border: 1px solid rgba(37,99,235,0.20);
+      color: #1d4ed8;
+      font-weight: 650;
+      width: fit-content;
     }
 
     .title-chip-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34,197,94,0.25);
+      width: 7px; height: 7px; border-radius: 999px;
+      background: var(--good);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.22);
     }
 
     h1 {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
+      font-size: clamp(20px, 2.2vw, 28px);
+      font-weight: 850;
+      letter-spacing: -0.04em;
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-wrap: wrap;
+      gap: 10px;
+      line-height: 1.1;
     }
 
-    h1 span.highlight { color: var(--accent-strong); }
+    h1 .highlight {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
-    .subtitle { font-size: 13px; color: var(--muted); }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 70ch;
+      line-height: 1.35;
+    }
 
     .control-row {
       display: flex;
@@ -108,88 +133,60 @@
       gap: 10px;
       align-items: center;
       justify-content: flex-end;
+      width: 100%;
     }
 
     .pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 12px;
+      gap: 8px;
+      padding: 8px 12px;
       border-radius: 999px;
-      background: #eef2ff;
-      border: 1px solid #c7d2fe;
-      font-size: 11px;
-      color: var(--accent-strong);
-      font-weight: 500;
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.18);
+      font-size: 12px;
+      color: #3730a3;
+      font-weight: 650;
       white-space: nowrap;
     }
 
     .pill-badge {
-      font-size: 11px;
-      padding: 3px 7px;
+      font-size: 12px;
+      padding: 3px 8px;
       border-radius: 999px;
       background: #ffffff;
-      color: var(--accent-strong);
-      border: 1px solid rgba(37,99,235,0.4);
+      border: 1px solid rgba(99,102,241,0.25);
+      color: #3730a3;
+      font-weight: 800;
     }
 
-    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+    }
 
     .select-wrapper { position: relative; }
-
     .select-wrapper select {
       appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      padding: 7px 28px 7px 11px;
+      padding: 8px 32px 8px 12px;
       border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #ffffff;
+      border: 1px solid rgba(148,163,184,0.55);
+      background: rgba(255,255,255,0.92);
       color: var(--text);
       font-size: 12px;
       outline: none;
-      box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+      box-shadow: 0 1px 2px rgba(2,6,23,0.04);
+      max-width: 100%;
     }
-
-    .select-wrapper select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-    }
-
+    .select-wrapper select:focus { border-color: rgba(37,99,235,0.65); box-shadow: var(--ring); }
     .select-wrapper::after {
       content: "▾";
       position: absolute;
-      right: 9px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 10px;
-      color: var(--muted);
-      pointer-events: none;
-    }
-
-    .search-wrapper { position: relative; }
-
-    .search-input {
-      padding: 7px 26px 7px 11px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-      font-size: 12px;
-      outline: none;
-      box-shadow: 0 1px 2px rgba(15,23,42,0.04);
-      min-width: 180px;
-    }
-
-    .search-input::placeholder { color: #9ca3af; }
-
-    .search-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 9px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
       font-size: 11px;
@@ -197,48 +194,87 @@
       pointer-events: none;
     }
 
+    .search-wrapper { position: relative; flex: 1 1 220px; max-width: 520px; }
+    .search-input {
+      width: 100%;
+      padding: 8px 30px 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.55);
+      background: rgba(255,255,255,0.92);
+      font-size: 12px;
+      outline: none;
+      box-shadow: 0 1px 2px rgba(2,6,23,0.04);
+    }
+    .search-input:focus { border-color: rgba(37,99,235,0.65); box-shadow: var(--ring); }
+    .search-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .btn {
+      border: 1px solid rgba(148,163,184,0.55);
+      background: rgba(255,255,255,0.92);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 650;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(2,6,23,0.04);
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-1px); background: #fff; border-color: rgba(37,99,235,0.45); }
+    .btn:focus { outline: none; box-shadow: var(--ring); }
+    .btn-primary { background: linear-gradient(90deg, rgba(37,99,235,0.14), rgba(124,58,237,0.12)); border-color: rgba(37,99,235,0.35); }
+    .btn-danger { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25); color: #991b1b; }
+
+    /* ✅ FIX: responsive grid with safe minmax to prevent overflow */
     main {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      width: 100%;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       gap: 18px;
-    }
-
-    @media (max-width: 900px) {
-      main { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius-xl);
-      padding: 16px 16px 14px;
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 30px rgba(15,23,42,0.05);
       width: 100%;
     }
+    @media (max-width: 980px) { main { grid-template-columns: minmax(0, 1fr); } }
+
+    .card, .side-card {
+      background: rgba(255,255,255,0.92);
+      border-radius: var(--r-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow2);
+      width: 100%;
+      min-width: 0; /* ✅ FIX: prevents overflow inside grid */
+    }
+    .card { padding: 16px; }
+    .side-card { padding: 14px; }
 
     .card-header {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
       align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
-
     .card-title {
       font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
+      font-weight: 750;
     }
-
     .badge-soft {
       font-size: 11px;
-      padding: 4px 8px;
+      padding: 5px 9px;
       border-radius: 999px;
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
+      background: rgba(148,163,184,0.12);
+      border: 1px solid rgba(148,163,184,0.22);
       color: var(--muted);
       white-space: nowrap;
     }
@@ -250,247 +286,267 @@
       margin-bottom: 12px;
       width: 100%;
     }
-
-    @media (max-width: 900px) {
-      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
+    @media (max-width: 1020px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 520px) { .summary-grid { grid-template-columns: 1fr; } }
 
     .metric {
-      background: linear-gradient(145deg, #ffffff, #eff6ff);
       border-radius: 18px;
       padding: 10px 11px;
-      border: 1px solid #e5e7eb;
+      border: 1px solid rgba(148,163,184,0.25);
+      background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(239,246,255,0.92));
+      min-width: 0;
     }
-
-    .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
-    .metric-value { font-size: 20px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 2px; }
-
+    .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .metric-value { font-size: 22px; font-weight: 850; letter-spacing: -0.05em; margin-bottom: 2px; }
     .metric-sub { font-size: 11px; color: var(--muted); }
-    .metric-sub span { color: var(--accent-strong); font-weight: 600; }
-
+    .metric-sub span { color: #1d4ed8; font-weight: 750; }
     .progress-bar {
-      width: 100%;
-      height: 6px;
+      margin-top: 6px;
+      height: 7px;
       border-radius: 999px;
-      background: #e5e7eb;
+      background: rgba(148,163,184,0.25);
       overflow: hidden;
-      margin-top: 5px;
     }
-
     .progress-fill {
       height: 100%;
-      width: 0;
+      width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #60a5fa, #22c55e);
+      background: linear-gradient(90deg, rgba(37,99,235,0.8), rgba(34,197,94,0.8));
       transition: width 0.35s ease;
     }
 
     .target-row {
       margin-top: 8px;
-      padding: 8px 10px;
-      border-radius: 14px;
-      background: #eef2ff;
-      border: 1px solid #c7d2fe;
+      padding: 10px 10px;
+      border-radius: var(--r-lg);
+      background: rgba(37,99,235,0.08);
+      border: 1px solid rgba(37,99,235,0.18);
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      font-size: 11px;
+      font-size: 12px;
+      flex-wrap: wrap;
     }
-
     .target-row-main { display: flex; flex-direction: column; gap: 2px; }
-
-    .target-row-main span.label {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      font-weight: 500;
-    }
-
-    .target-row-main span.value { font-weight: 600; color: var(--accent-strong); }
-
-    .target-input-wrap { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .target-row-main .label { text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 650; font-size: 11px; }
+    .target-row-main .value { font-weight: 800; color: #1d4ed8; }
+    .target-input-wrap { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
     .target-input-wrap label { color: var(--muted); font-size: 11px; }
-
     .target-input-wrap input {
-      width: 70px;
-      padding: 4px 8px;
+      width: 96px;
+      padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid #d1d5db;
-      font-size: 11px;
+      border: 1px solid rgba(148,163,184,0.55);
+      font-size: 12px;
       outline: none;
-      background: #ffffff;
+      background: rgba(255,255,255,0.92);
     }
+    .target-input-wrap input:focus { border-color: rgba(37,99,235,0.65); box-shadow: var(--ring); }
 
-    .target-input-wrap input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.18);
+    .small { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.35; }
+
+    .alert {
+      margin-top: 10px;
+      border-radius: var(--r-lg);
+      padding: 10px 11px;
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(148,163,184,0.10);
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.35;
     }
+    .alert strong { font-weight: 850; }
+    .alert.good { border-color: rgba(34,197,94,0.22); background: rgba(34,197,94,0.08); }
+    .alert.warn { border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.09); }
+    .alert.bad  { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.08); }
 
+    /* ✅ FIX: charts responsive sizing */
     .chart-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-top: 12px;
-    }
-
-    @media (max-width: 1100px) {
-      .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media (max-width: 900px) {
-      .chart-grid { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    .chart-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 10px;
-      border: 1px solid #e5e7eb;
-    }
-
-    .chart-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .summary-text {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 10px;
-      padding: 10px 11px;
-      border-radius: 14px;
-      background: #f3f4ff;
-      border: 1px dashed #c7d2fe;
-    }
-
-    .summary-text strong { color: var(--accent-strong); }
-
-    .side-card {
-      background: var(--card);
-      border-radius: var(--radius-xl);
-      padding: 14px 14px 12px;
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 30px rgba(15,23,42,0.04);
       width: 100%;
     }
+    @media (max-width: 1120px) { .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 980px) { .chart-grid { grid-template-columns: 1fr; } }
 
-    .list { list-style: none; margin-top: 4px; }
-
-    .list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 7px 6px;
-      border-radius: 10px;
-      transition: background 0.15s ease, transform 0.12s ease;
+    .chart-card {
+      background: rgba(255,255,255,0.92);
+      border-radius: var(--r-lg);
+      padding: 10px;
+      border: 1px solid rgba(148,163,184,0.25);
+      min-width: 0;
+      overflow: hidden;
+    }
+    .chart-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
     }
 
-    .list-item:hover { background: #eff6ff; transform: translateY(-1px); }
+    /* ✅ FIX: canvas must not exceed container width */
+    canvas { display: block; width: 100% !important; height: 220px !important; }
 
-    .list-label { font-size: 12px; color: var(--muted); font-weight: 500; }
-    .list-count { font-size: 12px; font-weight: 600; color: var(--accent-strong); }
-
-    .list-chip {
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid #e5e7eb;
+    .summary-text {
+      font-size: 12px;
       color: var(--muted);
-      background: #f9fafb;
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: var(--r-lg);
+      background: rgba(99,102,241,0.07);
+      border: 1px dashed rgba(99,102,241,0.28);
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .summary-text strong { color: #3730a3; }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; align-items: center; }
+
+    .filter-chip {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.38);
+      background: rgba(255,255,255,0.92);
+      font-size: 12px;
+      color: #334155;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+    .filter-chip:hover { transform: translateY(-1px); border-color: rgba(37,99,235,0.35); }
+    .filter-chip-active { background: linear-gradient(90deg, rgba(37,99,235,0.18), rgba(124,58,237,0.14)); border-color: rgba(37,99,235,0.45); box-shadow: var(--ring2); font-weight: 750; }
+
+    .table-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      width: 100%;
     }
 
     .table-wrap {
       margin-top: 10px;
-      border-radius: 18px;
-      border: 1px solid #e5e7eb;
-      background: #ffffff;
+      border-radius: var(--r-xl);
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(255,255,255,0.94);
+      max-height: 420px;
+      overflow: auto; /* ✅ FIX: horizontal scroll if needed */
       width: 100%;
-      max-height: 360px;
-      overflow-y: auto;
-      overflow-x: hidden;
     }
 
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 980px; }
+    @media (max-width: 980px) { table { min-width: 860px; } }
+    @media (max-width: 520px) { table { min-width: 760px; } }
 
-    thead { position: sticky; top: 0; background: #f9fafb; z-index: 2; }
-
-    th, td { padding: 7px 10px; text-align: left; }
+    thead { position: sticky; top: 0; z-index: 2; background: rgba(248,250,252,0.96); backdrop-filter: blur(8px); }
+    th, td { padding: 9px 10px; text-align: left; vertical-align: top; }
     th {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--muted);
-      border-bottom: 1px solid #e5e7eb;
-      background: #f9fafb;
+      border-bottom: 1px solid rgba(148,163,184,0.25);
       white-space: nowrap;
     }
+    tbody tr:nth-child(even) { background: rgba(148,163,184,0.07); }
+    tbody tr:hover { background: rgba(37,99,235,0.07); }
 
-    td { white-space: normal; }
-
-    tbody tr:nth-child(even) { background: #f9fafb; }
-    tbody tr:hover { background: #eff6ff; }
-
-    .status-pill {
+    .tag {
       display: inline-flex;
       padding: 3px 8px;
       border-radius: 999px;
       font-size: 11px;
-      border: 1px solid transparent;
-    }
-
-    .status-completed { border-color: rgba(22,163,74,0.35); color: #166534; background: #dcfce7; }
-    .status-in-progress { border-color: rgba(37,99,235,0.35); color: #1d4ed8; background: #dbeafe; }
-    .status-pending { border-color: rgba(234,179,8,0.5); color: #92400e; background: #fef9c3; }
-    .status-other { border-color: #d1d5db; color: var(--muted); background: #f3f4f6; }
-
-    .tag {
-      display: inline-flex;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
+      background: rgba(148,163,184,0.12);
+      border: 1px solid rgba(148,163,184,0.22);
       color: var(--muted);
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    .small { font-size: 11px; color: var(--muted); margin-top: 6px; }
-
-    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-
-    .filter-chip {
-      padding: 3px 10px;
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
       font-size: 11px;
-      color: #4b5563;
-      cursor: pointer;
-      transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+      border: 1px solid transparent;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .status-pill::before {
+      content: "";
+      width: 8px; height: 8px; border-radius: 999px;
+      background: rgba(148,163,184,0.9);
+      box-shadow: 0 0 0 3px rgba(148,163,184,0.18);
+    }
+    .status-completed { border-color: rgba(34,197,94,0.22); background: rgba(34,197,94,0.10); color: #166534; }
+    .status-completed::before { background: var(--good); box-shadow: 0 0 0 3px rgba(34,197,94,0.20); }
+    .status-in-progress { border-color: rgba(37,99,235,0.22); background: rgba(37,99,235,0.10); color: #1d4ed8; }
+    .status-in-progress::before { background: var(--info); box-shadow: 0 0 0 3px rgba(96,165,250,0.20); }
+    .status-pending { border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.12); color: #92400e; }
+    .status-pending::before { background: var(--warn); box-shadow: 0 0 0 3px rgba(245,158,11,0.20); }
+    .status-other { border-color: rgba(148,163,184,0.25); background: rgba(148,163,184,0.12); color: #475569; }
+
+    .list { list-style: none; margin-top: 6px; }
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.0);
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .list-item:hover {
+      transform: translateY(-1px);
+      background: rgba(37,99,235,0.06);
+      border-color: rgba(37,99,235,0.15);
+    }
+    .list-label { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .list-count { font-size: 13px; font-weight: 900; color: #1d4ed8; }
+    .list-chip {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.25);
+      color: var(--muted);
+      background: rgba(255,255,255,0.9);
+      white-space: nowrap;
     }
 
-    .filter-chip:hover { background: #eff6ff; transform: translateY(-1px); }
+    .error { margin-top: 10px; font-size: 12px; color: var(--bad); font-weight: 650; }
 
-    .filter-chip-active {
-      background: #1d4ed8;
-      color: #ffffff;
-      border-color: #1d4ed8;
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.24);
-    }
-
-    .error { margin-top: 8px; font-size: 12px; color: var(--danger); }
-
-    /* ===== Calendar (NEW) ===== */
+    /* ===== Calendar ===== */
     .calendar-wrap {
       margin-top: 10px;
-      border-radius: 18px;
-      border: 1px solid #e5e7eb;
-      background: #ffffff;
+      border-radius: var(--r-xl);
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(255,255,255,0.92);
       padding: 10px;
+      position: relative;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .calendar-toprow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
     }
 
     .calendar-weekdays {
@@ -498,6 +554,7 @@
       grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 6px;
       margin-bottom: 8px;
+      width: 100%;
     }
 
     .calendar-weekday {
@@ -506,74 +563,60 @@
       letter-spacing: 0.12em;
       color: var(--muted);
       text-align: center;
+      font-weight: 750;
     }
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 6px;
+      width: 100%;
     }
 
     .calendar-cell {
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      min-height: 52px;
-      padding: 6px 6px 7px;
+      border: 1px solid rgba(148,163,184,0.25);
+      border-radius: 14px;
+      min-height: 56px;
+      padding: 7px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: #f9fafb;
+      background: rgba(248,250,252,0.95);
       cursor: pointer;
-      transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      min-width: 0;
     }
 
-    .calendar-cell:hover {
-      background: #eff6ff;
-      transform: translateY(-1px);
-    }
-
-    .calendar-cell.muted {
-      opacity: 0.45;
-      background: #f3f4f6;
-      cursor: default;
-    }
+    .calendar-cell:hover { transform: translateY(-1px); border-color: rgba(37,99,235,0.35); box-shadow: var(--ring2); }
+    .calendar-cell.muted { opacity: 0.4; cursor: default; background: rgba(148,163,184,0.08); }
+    .calendar-cell.today { border-color: rgba(124,58,237,0.45); box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+    .calendar-cell.active { border-color: rgba(37,99,235,0.65); box-shadow: var(--ring); }
 
     .calendar-date {
       font-size: 11px;
-      font-weight: 600;
-      color: #374151;
-    }
-
-    .calendar-meta {
+      font-weight: 900;
+      color: #334155;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 6px;
     }
 
-    .calendar-count {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent-strong);
-    }
-
-    .calendar-dots {
-      display: inline-flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
+    .calendar-badge {
+      font-size: 10px;
+      padding: 2px 7px;
       border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.08);
+      border: 1px solid rgba(148,163,184,0.22);
+      background: rgba(255,255,255,0.85);
+      color: var(--muted);
+      font-weight: 800;
     }
 
-    .dot-completed { background: #22c55e; }
-    .dot-inprogress { background: #60a5fa; }
-    .dot-pending { background: #f59e0b; }
-    .dot-mixed { background: #a78bfa; }
+    .calendar-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .calendar-count { font-size: 13px; font-weight: 950; color: #1d4ed8; }
 
     .calendar-legend {
       display: flex;
@@ -581,29 +624,44 @@
       gap: 10px;
       margin-top: 10px;
       padding-top: 8px;
-      border-top: 1px solid #e5e7eb;
+      border-top: 1px solid rgba(148,163,184,0.25);
     }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.08);
-    }
-
-    .legend-completed { background: #22c55e; }
-    .legend-inprogress { background: #60a5fa; }
-    .legend-pending { background: #f59e0b; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); font-weight: 750; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 999px; border: 1px solid rgba(2,6,23,0.08); }
+    .legend-completed { background: var(--good); }
+    .legend-inprogress { background: var(--info); }
+    .legend-pending { background: var(--warn); }
     .legend-mixed { background: #a78bfa; }
-    /* ===== /Calendar ===== */
+
+    .tooltip {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      background: rgba(15,23,42,0.94);
+      color: #e2e8f0;
+      border: 1px solid rgba(148,163,184,0.22);
+      border-radius: 14px;
+      padding: 10px 11px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+      font-size: 12px;
+      width: min(320px, calc(100vw - 24px));
+      transform: translate(-9999px, -9999px);
+      backdrop-filter: blur(10px);
+    }
+    .tooltip strong { color: #fff; }
+    .tooltip .muted { color: rgba(226,232,240,0.75); font-size: 11px; margin-top: 4px; line-height: 1.3; }
+    .tooltip .row { display: flex; justify-content: space-between; gap: 10px; margin-top: 6px; }
+    .tooltip .k { color: rgba(226,232,240,0.75); }
+    .tooltip .v { font-weight: 850; }
+
+    .heat {
+      position: absolute;
+      inset: 0;
+      opacity: 0.06;
+      background: linear-gradient(135deg, rgba(37,99,235,0.18), rgba(124,58,237,0.15));
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
   </style>
 </head>
 <body>
@@ -615,33 +673,24 @@
           <div class="brand-row">
             <img src="https://cdn.prod.website-files.com/67076f718690cbc6a7e9014c/68b541e62bb82a30cbcbe753_logo-global.svg"
                  alt="Global Select Logo" class="logo" />
-            <div>
-              <div class="title-chip">
-                <span class="title-chip-dot"></span>
-                Content Production Overview
-              </div>
+            <div class="title-chip">
+              <span class="title-chip-dot"></span>
+              Content Production Overview
             </div>
           </div>
-          <h1>
-            Creator Productivity
-            <span class="highlight">Dashboard</span>
-          </h1>
-          <p class="subtitle">
-            Live snapshot of how much your creators ship each month across all platforms.
-          </p>
+          <h1>Creator Productivity <span class="highlight">Dashboard</span></h1>
+          <p class="subtitle">Full-width + responsive layout. Table scrolls horizontally on mobile. Charts never overflow.</p>
         </div>
+
         <div class="control-row">
           <div class="pill">
             <span>Creators tracked</span>
             <span class="pill-badge" id="creatorCountBadge">–</span>
           </div>
+
           <div class="filters">
-            <div class="select-wrapper">
-              <select id="monthFilter"></select>
-            </div>
-            <div class="select-wrapper">
-              <select id="creatorFilter"></select>
-            </div>
+            <div class="select-wrapper"><select id="monthFilter"></select></div>
+            <div class="select-wrapper"><select id="creatorFilter"></select></div>
             <div class="select-wrapper">
               <select id="statusFilter">
                 <option value="">All Status</option>
@@ -651,71 +700,53 @@
                 <option value="other">Other</option>
               </select>
             </div>
+
             <div class="search-wrapper">
-              <input
-                id="searchFilter"
-                class="search-input"
-                type="text"
-                placeholder="Search topic, platform, creator, caption..."
-              />
+              <input id="searchFilter" class="search-input" type="text" placeholder="Search topic, platform, creator, caption..." />
               <span class="search-icon">🔍</span>
             </div>
+
+            <button class="btn btn-primary" id="resetFiltersBtn" type="button">Reset</button>
           </div>
         </div>
       </header>
 
       <main>
-        <!-- Left: main metrics, charts & table -->
+        <!-- LEFT -->
         <section>
           <div class="card">
             <div class="card-header">
               <div class="card-title">Key Metrics</div>
               <div class="badge-soft" id="currentMonthLabel">Month: –</div>
             </div>
+
             <div class="summary-grid">
               <div class="metric">
                 <div class="metric-label">Total Items</div>
                 <div class="metric-value" id="totalItems">–</div>
-                <div class="metric-sub">
-                  <span id="totalItemsPerDay">–</span> per day avg
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" id="totalItemsBar"></div>
-                </div>
+                <div class="metric-sub"><span id="totalItemsPerDay">–</span> per day avg</div>
+                <div class="progress-bar"><div class="progress-fill" id="totalItemsBar"></div></div>
               </div>
               <div class="metric">
                 <div class="metric-label">Completed</div>
                 <div class="metric-value" id="completedItems">–</div>
-                <div class="metric-sub">
-                  <span id="completedPct">–%</span> of total
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" id="completedBar"></div>
-                </div>
+                <div class="metric-sub"><span id="completedPct">–%</span> of total</div>
+                <div class="progress-bar"><div class="progress-fill" id="completedBar"></div></div>
               </div>
               <div class="metric">
                 <div class="metric-label">In Progress</div>
                 <div class="metric-value" id="inProgressItems">–</div>
-                <div class="metric-sub">
-                  <span id="inProgressPct">–%</span> of total
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" id="inProgressBar"></div>
-                </div>
+                <div class="metric-sub"><span id="inProgressPct">–%</span> of total</div>
+                <div class="progress-bar"><div class="progress-fill" id="inProgressBar"></div></div>
               </div>
               <div class="metric">
                 <div class="metric-label">Pending / Backlog</div>
                 <div class="metric-value" id="pendingItems">–</div>
-                <div class="metric-sub">
-                  <span id="pendingPct">–%</span> of total
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" id="pendingBar"></div>
-                </div>
+                <div class="metric-sub"><span id="pendingPct">–%</span> of total</div>
+                <div class="progress-bar"><div class="progress-fill" id="pendingBar"></div></div>
               </div>
             </div>
 
-            <!-- Target / Productivity row -->
             <div class="target-row">
               <div class="target-row-main">
                 <span class="label">Monthly target</span>
@@ -727,13 +758,9 @@
               </div>
             </div>
 
-            <p class="small">
-              Tip: Keep “Status” consistent in the sheet (e.g. <strong>Completed</strong>, <strong>In Progress</strong>, <strong>Pending</strong>)
-              so these cards and charts stay clean.
-            </p>
             <p class="small" id="consistencyText"></p>
+            <div class="alert" id="insightAlert">Select a month and filters to see actionable insights.</div>
 
-            <!-- Charts -->
             <div class="chart-grid">
               <div class="chart-card">
                 <div class="chart-title">Items per Creator</div>
@@ -749,10 +776,7 @@
               </div>
             </div>
 
-            <!-- Auto summary -->
-            <div class="summary-text" id="autoSummary">
-              Select a month and filters to see a quick summary of this view.
-            </div>
+            <div class="summary-text" id="autoSummary">Select a month and filters to see a quick summary of this view.</div>
           </div>
 
           <div class="card" style="margin-top: 14px;">
@@ -761,23 +785,37 @@
                 <div class="card-title">Content Log</div>
                 <div class="chip-row" id="platformChipRow"></div>
               </div>
+              <div class="badge-soft">Showing <span id="rowCount">–</span> items</div>
             </div>
-            <div class="badge-soft">
-              Showing <span id="rowCount">–</span> items
+
+            <div class="table-toolbar">
+              <div class="filters" style="justify-content:flex-start;">
+                <button class="btn" type="button" id="quickCompleted">Only Completed</button>
+                <button class="btn" type="button" id="quickInEdit">Only In Edit</button>
+                <button class="btn" type="button" id="quickPending">Only Pending</button>
+                <button class="btn btn-danger" type="button" id="clearDayBtn" title="Clear calendar day filter">Clear Day</button>
+              </div>
+
+              <div class="filters">
+                <div class="select-wrapper">
+                  <select id="sortFilter">
+                    <option value="date-desc">Sort: Newest</option>
+                    <option value="date-asc">Sort: Oldest</option>
+                    <option value="creator-asc">Sort: Creator (A→Z)</option>
+                    <option value="platform-asc">Sort: Platform (A→Z)</option>
+                    <option value="status-asc">Sort: Status (A→Z)</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary" type="button" id="exportCsvBtn">Export CSV</button>
+              </div>
             </div>
+
             <div class="table-wrap">
               <table>
                 <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Creator</th>
-                  <th>Video Type</th>
-                  <th>Platform</th>
-                  <th>Location</th>
-                  <th>Topic</th>
-                  <th>Dropbox Link / Script</th>
-                  <th>Status</th>
-                  <th>Caption</th>
+                  <th>Date</th><th>Creator</th><th>Video Type</th><th>Platform</th><th>Location</th>
+                  <th>Topic</th><th>Dropbox Link / Script</th><th>Status</th><th>Caption</th>
                 </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -787,12 +825,12 @@
           </div>
         </section>
 
-        <!-- Right: per-creator and status/platform lists + calendar -->
+        <!-- RIGHT -->
         <section>
           <div class="side-card">
             <div class="card-header" style="margin-bottom:4px;">
               <div class="card-title">Creator Breakdown</div>
-              <div class="badge-soft">by items completed</div>
+              <div class="badge-soft">by completed</div>
             </div>
             <ul class="list" id="creatorStats"></ul>
           </div>
@@ -800,33 +838,41 @@
           <div class="side-card" style="margin-top:12px;">
             <div class="card-header" style="margin-bottom:4px;">
               <div class="card-title">Status & Platforms</div>
+              <div class="badge-soft">keep statuses consistent</div>
             </div>
             <ul class="list" id="statusStats"></ul>
-            <ul class="list" id="platformStats" style="margin-top:6px; border-top:1px solid #e5e7eb; padding-top:4px;"></ul>
+            <ul class="list" id="platformStats" style="margin-top:6px; border-top:1px solid rgba(148,163,184,0.25); padding-top:6px;"></ul>
           </div>
 
-          <!-- NEW: Calendar View below Status & Platforms -->
           <div class="side-card" style="margin-top:12px;">
             <div class="card-header" style="margin-bottom:4px;">
-              <div class="card-title">Calendar View</div>
+              <div class="card-title">Calendar Heatmap</div>
               <div class="badge-soft" id="calendarMonthLabel">–</div>
             </div>
 
             <div class="calendar-wrap">
+              <div class="calendar-toprow">
+                <div class="small" id="calendarHint" style="margin-top:0;">Click a day to filter. Hover for details.</div>
+                <button class="btn btn-danger" id="calendarClearBtn" type="button">Clear</button>
+              </div>
               <div class="calendar-weekdays" id="calendarWeekdays"></div>
               <div class="calendar-grid" id="calendarGrid"></div>
-            </div>
 
-            <div class="calendar-legend">
-              <span class="legend-item"><span class="legend-dot legend-completed"></span>Completed</span>
-              <span class="legend-item"><span class="legend-dot legend-inprogress"></span>In Edit</span>
-              <span class="legend-item"><span class="legend-dot legend-pending"></span>Pending</span>
-              <span class="legend-item"><span class="legend-dot legend-mixed"></span>Mixed</span>
+              <div class="calendar-legend">
+                <span class="legend-item"><span class="legend-dot legend-completed"></span>Completed</span>
+                <span class="legend-item"><span class="legend-dot legend-inprogress"></span>In Edit</span>
+                <span class="legend-item"><span class="legend-dot legend-pending"></span>Pending</span>
+                <span class="legend-item"><span class="legend-dot legend-mixed"></span>Mixed</span>
+              </div>
             </div>
+          </div>
 
-            <div class="small" id="calendarHint">
-              Each day shows how many items are on that date (from the sheet Date column). Click a day to filter.
+          <div class="side-card" style="margin-top:12px;">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Insights</div>
+              <div class="badge-soft" id="insightsTag">–</div>
             </div>
+            <ul class="list" id="insightsList"></ul>
           </div>
         </section>
       </main>
@@ -834,7 +880,8 @@
   </div>
 </div>
 
-<!-- Chart.js CDN -->
+<div class="tooltip" id="tooltip"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -846,24 +893,30 @@
   const SHEET_URL =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
 
+  const STORAGE_KEY = "creator_dashboard_state_v3";
+
   let allData = [];
   let months = [];
   let creators = [];
   let searchTerm = "";
-  let selectedPlatform = ""; // for platform chips
+  let selectedPlatform = "";
   let monthlyTarget = 60;
-
-  // NEW: calendar date filter (YYYY-MM-DD)
   let selectedDayKey = "";
+  let sortMode = "date-desc";
 
   let creatorChartInstance = null;
   let platformChartInstance = null;
   let typeChartInstance = null;
 
-  // UPDATED: added "in edit", "edit" to In Progress; "assign" to Pending
   const COMPLETED_STATUSES = ["completed", "done", "published", "posted"];
   const INPROGRESS_STATUSES = ["in progress", "draft", "editing", "in edit", "edit"];
   const PENDING_STATUSES = ["pending", "todo", "backlog", "not started", "assign"];
+
+  const $ = (id) => document.getElementById(id);
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const pad2 = (n) => String(n).padStart(2, "0");
+
+  function normalizeStatus(status) { return (status || "").toLowerCase().trim(); }
 
   function parseGoogleDate(value) {
     if (!value) return null;
@@ -875,26 +928,89 @@
     return new Date(value);
   }
 
+  function getMonthKey(date) {
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}`;
+  }
+  function dateToDayKey(date) {
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+  }
+
+  function formatMonthLabelFromKey(key) {
+    const [y, m] = key.split("-").map(Number);
+    return new Date(y, m - 1, 1).toLocaleString(undefined, { month: "short", year: "numeric" });
+  }
+  function formatDateDisplay(date) {
+    return date.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "2-digit" });
+  }
+
+  function statusMatchesFilter(rowStatus, filterValue) {
+    const s = normalizeStatus(rowStatus);
+    if (!filterValue) return true;
+    if (filterValue === "completed") return COMPLETED_STATUSES.includes(s);
+    if (filterValue === "in-progress") return INPROGRESS_STATUSES.includes(s);
+    if (filterValue === "pending") return PENDING_STATUSES.includes(s);
+    if (filterValue === "other") {
+      return !COMPLETED_STATUSES.includes(s) && !INPROGRESS_STATUSES.includes(s) && !PENDING_STATUSES.includes(s);
+    }
+    return true;
+  }
+
+  function getStatusClass(status) {
+    const s = normalizeStatus(status);
+    if (COMPLETED_STATUSES.includes(s)) return "status-completed";
+    if (INPROGRESS_STATUSES.includes(s)) return "status-in-progress";
+    if (PENDING_STATUSES.includes(s)) return "status-pending";
+    return "status-other";
+  }
+
+  function showError(msg) {
+    const el = $("errorMsg");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+  function clearError() {
+    const el = $("errorMsg");
+    el.textContent = "";
+    el.style.display = "none";
+  }
+
+  function saveState() {
+    try {
+      const state = {
+        month: $("monthFilter")?.value || "",
+        creator: $("creatorFilter")?.value || "",
+        status: $("statusFilter")?.value || "",
+        search: $("searchFilter")?.value || "",
+        platform: selectedPlatform || "",
+        target: monthlyTarget || 60,
+        day: selectedDayKey || "",
+        sort: sortMode || "date-desc"
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (_) {}
+  }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) { return null; }
+  }
+
   async function fetchSheetData() {
     try {
       const res = await fetch(SHEET_URL);
       const text = await res.text();
-
       const jsonStr = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
       const parsed = JSON.parse(jsonStr);
-
-      const table = parsed.table;
-      const rows = table.rows || [];
+      const rows = parsed.table?.rows || [];
       const data = [];
 
       for (const row of rows) {
         const c = row.c || [];
-        // Columns: Date, Video Type, Location, Topic, Script, Platform, Status, Creator, Caption
         const rawDate = c[0]?.v;
         if (!rawDate) continue;
-
         const date = parseGoogleDate(rawDate);
-        if (isNaN(date)) continue;
+        if (!date || isNaN(date)) continue;
 
         data.push({
           date,
@@ -910,50 +1026,20 @@
       }
       return data;
     } catch (err) {
-      console.error("Error loading sheet:", err);
-      showError("Could not load data from Google Sheets. Check Sheet ID, Sheet Name and public access.");
+      console.error(err);
+      showError("Could not load data from Google Sheets. Check Sheet ID, Sheet Name, and public access.");
       return [];
     }
   }
 
-  function getMonthKey(date) {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    return `${y}-${m}`;
-  }
-
-  function formatMonthLabelFromKey(key) {
-    const [y, m] = key.split("-").map(Number);
-    const dt = new Date(y, m - 1, 1);
-    return dt.toLocaleString(undefined, { month: "short", year: "numeric" });
-  }
-
-  function normalizeStatus(status) {
-    return (status || "").toLowerCase().trim();
-  }
-
-  function statusMatchesFilter(rowStatus, filterValue) {
-    const s = normalizeStatus(rowStatus);
-    if (!filterValue) return true;
-
-    if (filterValue === "completed") return COMPLETED_STATUSES.includes(s);
-    if (filterValue === "in-progress") return INPROGRESS_STATUSES.includes(s);
-    if (filterValue === "pending") return PENDING_STATUSES.includes(s);
-    if (filterValue === "other") {
-      return !COMPLETED_STATUSES.includes(s) &&
-             !INPROGRESS_STATUSES.includes(s) &&
-             !PENDING_STATUSES.includes(s);
-    }
-    return true;
-  }
-
   function buildFilters() {
-    const monthFilter = document.getElementById("monthFilter");
-    const creatorFilter = document.getElementById("creatorFilter");
-    const creatorCountBadge = document.getElementById("creatorCountBadge");
-    const statusFilter = document.getElementById("statusFilter");
-    const searchFilter = document.getElementById("searchFilter");
-    const targetInput = document.getElementById("targetInput");
+    const monthFilter = $("monthFilter");
+    const creatorFilter = $("creatorFilter");
+    const creatorCountBadge = $("creatorCountBadge");
+    const statusFilter = $("statusFilter");
+    const searchFilter = $("searchFilter");
+    const targetInput = $("targetInput");
+    const sortFilter = $("sortFilter");
 
     const monthSet = new Set();
     const creatorSet = new Set();
@@ -961,9 +1047,8 @@
 
     allData.forEach(row => {
       monthSet.add(getMonthKey(row.date));
-      if (row.creator) creatorSet.add(row.creator);
-      const p = row.platform || "Unassigned";
-      platformSet.add(p);
+      creatorSet.add(row.creator || "Unassigned");
+      platformSet.add(row.platform || "Unassigned");
     });
 
     months = Array.from(monthSet).sort();
@@ -994,17 +1079,16 @@
       creatorFilter.appendChild(opt);
     });
 
-    creatorCountBadge.textContent = creators.length.toString() || "0";
+    creatorCountBadge.textContent = String(creators.length || 0);
 
-    monthFilter.addEventListener("change", () => {
-      selectedDayKey = ""; // reset day when month changes
-      renderDashboard();
-    });
-    creatorFilter.addEventListener("change", renderDashboard);
-    statusFilter.addEventListener("change", renderDashboard);
+    // Bind events
+    monthFilter.addEventListener("change", () => { selectedDayKey = ""; saveState(); renderDashboard(); });
+    creatorFilter.addEventListener("change", () => { saveState(); renderDashboard(); });
+    statusFilter.addEventListener("change", () => { saveState(); renderDashboard(); });
 
     searchFilter.addEventListener("input", (e) => {
       searchTerm = (e.target.value || "").toLowerCase().trim();
+      saveState();
       renderDashboard();
     });
 
@@ -1012,67 +1096,101 @@
       const val = Number(e.target.value);
       if (!isNaN(val) && val > 0) {
         monthlyTarget = val;
+        saveState();
         renderDashboard();
       }
     });
 
+    sortFilter.addEventListener("change", (e) => {
+      sortMode = e.target.value || "date-desc";
+      saveState();
+      renderDashboard();
+    });
+
+    $("quickCompleted").addEventListener("click", () => { statusFilter.value = "completed"; saveState(); renderDashboard(); });
+    $("quickInEdit").addEventListener("click", () => { statusFilter.value = "in-progress"; saveState(); renderDashboard(); });
+    $("quickPending").addEventListener("click", () => { statusFilter.value = "pending"; saveState(); renderDashboard(); });
+
+    $("calendarClearBtn").addEventListener("click", () => { selectedDayKey = ""; saveState(); renderDashboard(); });
+    $("clearDayBtn").addEventListener("click", () => { selectedDayKey = ""; saveState(); renderDashboard(); });
+
+    $("resetFiltersBtn").addEventListener("click", () => {
+      searchFilter.value = ""; searchTerm = "";
+      statusFilter.value = "";
+      creatorFilter.value = "";
+      selectedPlatform = "";
+      selectedDayKey = "";
+      sortMode = "date-desc";
+      sortFilter.value = "date-desc";
+      targetInput.value = "60";
+      monthlyTarget = 60;
+      saveState();
+      buildPlatformChips(platforms);
+      renderDashboard();
+    });
+
+    $("exportCsvBtn").addEventListener("click", exportCurrentViewCsv);
+
     buildPlatformChips(platforms);
+    applyLoadedState(); // after dropdowns exist
   }
 
   function buildPlatformChips(platforms) {
-    const container = document.getElementById("platformChipRow");
+    const container = $("platformChipRow");
     container.innerHTML = "";
 
-    function addChip(label, value) {
+    const addChip = (label, value) => {
       const chip = document.createElement("button");
       chip.type = "button";
       chip.className = "filter-chip" + (selectedPlatform === value ? " filter-chip-active" : "");
       chip.textContent = label;
       chip.addEventListener("click", () => {
         selectedPlatform = value;
+        saveState();
         buildPlatformChips(platforms);
         renderDashboard();
       });
       container.appendChild(chip);
-    }
+    };
 
     addChip("All platforms", "");
     platforms.forEach(p => addChip(p, p));
   }
 
-  function showError(msg) {
-    const el = document.getElementById("errorMsg");
-    el.textContent = msg;
-    el.style.display = "block";
-  }
+  function applyLoadedState() {
+    const state = loadState();
+    if (!state) return;
 
-  function clearError() {
-    const el = document.getElementById("errorMsg");
-    el.textContent = "";
-    el.style.display = "none";
+    const monthFilter = $("monthFilter");
+    const creatorFilter = $("creatorFilter");
+    const statusFilter = $("statusFilter");
+    const searchFilter = $("searchFilter");
+    const targetInput = $("targetInput");
+    const sortFilter = $("sortFilter");
+
+    if (state.month && Array.from(monthFilter.options).some(o => o.value === state.month)) monthFilter.value = state.month;
+    if (state.creator && Array.from(creatorFilter.options).some(o => o.value === state.creator)) creatorFilter.value = state.creator;
+    if (state.status) statusFilter.value = state.status;
+
+    if (typeof state.search === "string") { searchFilter.value = state.search; searchTerm = state.search.toLowerCase().trim(); }
+    if (typeof state.target === "number" && state.target > 0) { monthlyTarget = state.target; targetInput.value = String(state.target); }
+    if (typeof state.platform === "string") selectedPlatform = state.platform;
+    if (typeof state.day === "string") selectedDayKey = state.day;
+    if (typeof state.sort === "string") { sortMode = state.sort; sortFilter.value = state.sort; }
   }
 
   function renderDashboard() {
     clearError();
+    if (!allData.length || !months.length) { showError("No rows found."); return; }
 
-    if (!allData.length || !months.length) {
-      showError("No rows found. Make sure your sheet has data and the correct columns.");
-      return;
-    }
+    const monthKey = $("monthFilter").value || months[months.length - 1];
+    const creator = $("creatorFilter").value;
+    const statusFilterVal = $("statusFilter").value;
 
-    const monthFilter = document.getElementById("monthFilter");
-    const creatorFilter = document.getElementById("creatorFilter");
-    const statusFilter = document.getElementById("statusFilter");
-
-    const monthKey = monthFilter.value || months[months.length - 1];
-    const creator = creatorFilter.value;
-    const statusFilterVal = statusFilter.value;
-
-    // Guard: if day filter belongs to other month, clear it
     if (selectedDayKey && !selectedDayKey.startsWith(monthKey + "-")) selectedDayKey = "";
 
     const monthLabel = formatMonthLabelFromKey(monthKey);
-    document.getElementById("currentMonthLabel").textContent = `Month: ${monthLabel}`;
+    $("currentMonthLabel").textContent = `Month: ${monthLabel}`;
 
     const filtered = allData.filter(row => {
       const sameMonth = getMonthKey(row.date) === monthKey;
@@ -1081,53 +1199,33 @@
       const platformLabel = row.platform || "Unassigned";
       const matchesPlatform = !selectedPlatform || platformLabel === selectedPlatform;
 
-      const textToSearch = [
-        row.topic,
-        row.platform,
-        row.location,
-        row.videoType,
-        row.creator,
-        row.status,
-        row.caption
-      ].join(" ").toLowerCase();
-
+      const textToSearch = [row.topic,row.platform,row.location,row.videoType,row.creator,row.status,row.caption].join(" ").toLowerCase();
       const matchesSearch = !searchTerm || textToSearch.includes(searchTerm);
       const matchesStatus = statusMatchesFilter(row.status, statusFilterVal);
 
-      // NEW: filter by selected calendar day if set
       let matchesDay = true;
-      if (selectedDayKey) {
-        const y = Number(selectedDayKey.slice(0,4));
-        const m = Number(selectedDayKey.slice(5,7));
-        const d = Number(selectedDayKey.slice(8,10));
-        matchesDay = (row.date.getFullYear() === y) &&
-                     ((row.date.getMonth() + 1) === m) &&
-                     (row.date.getDate() === d);
-      }
+      if (selectedDayKey) matchesDay = dateToDayKey(row.date) === selectedDayKey;
 
       return sameMonth && sameCreator && matchesSearch && matchesStatus && matchesPlatform && matchesDay;
     });
 
+    const monthOnly = allData.filter(row => getMonthKey(row.date) === monthKey);
+
     updateSummaryCards(filtered, monthKey);
     updateCreatorStats(filtered);
     updateStatusPlatformStats(filtered);
+    updateCalendarView(filtered, monthOnly, monthKey);
+    updateInsights(filtered, monthKey);
     updateTable(filtered);
     updateCharts(filtered);
-    updateCalendarView(filtered, monthKey); // NEW
-    updateSummaryText(filtered, {
-      monthLabel,
-      creator,
-      statusFilterVal,
-      platformLabel: selectedPlatform
-    });
+    updateSummaryText(filtered, { monthLabel, creator, statusFilterVal, platformLabel: selectedPlatform });
+
+    saveState();
   }
 
   function updateSummaryCards(data, monthKey) {
     const totalItems = data.length;
-
-    let completed = 0;
-    let inProgress = 0;
-    let pending = 0;
+    let completed = 0, inProgress = 0, pending = 0;
 
     data.forEach(row => {
       const status = normalizeStatus(row.status);
@@ -1136,117 +1234,117 @@
       else if (PENDING_STATUSES.includes(status)) pending++;
     });
 
-    document.getElementById("totalItems").textContent = totalItems.toString();
-    document.getElementById("completedItems").textContent = completed.toString();
-    document.getElementById("inProgressItems").textContent = inProgress.toString();
-    document.getElementById("pendingItems").textContent = pending.toString();
+    $("totalItems").textContent = String(totalItems);
+    $("completedItems").textContent = String(completed);
+    $("inProgressItems").textContent = String(inProgress);
+    $("pendingItems").textContent = String(pending);
 
-    const totalPctBase = totalItems || 1;
-    const completedPct = Math.round((completed / totalPctBase) * 100);
-    const inProgressPct = Math.round((inProgress / totalPctBase) * 100);
-    const pendingPct = Math.round((pending / totalPctBase) * 100);
+    const base = totalItems || 1;
+    const completedPct = Math.round((completed / base) * 100);
+    const inProgressPct = Math.round((inProgress / base) * 100);
+    const pendingPct = Math.round((pending / base) * 100);
 
-    document.getElementById("completedPct").textContent = `${completedPct}%`;
-    document.getElementById("inProgressPct").textContent = `${inProgressPct}%`;
-    document.getElementById("pendingPct").textContent = `${pendingPct}%`;
+    $("completedPct").textContent = `${completedPct}%`;
+    $("inProgressPct").textContent = `${inProgressPct}%`;
+    $("pendingPct").textContent = `${pendingPct}%`;
 
     const [y, m] = monthKey.split("-").map(Number);
     const daysInMonth = new Date(y, m, 0).getDate();
-    const perDay = totalItems ? (totalItems / daysInMonth) : 0;
-    document.getElementById("totalItemsPerDay").textContent = perDay.toFixed(1);
+    $("totalItemsPerDay").textContent = (totalItems ? (totalItems / daysInMonth) : 0).toFixed(1);
 
     updateTargetSummary(totalItems, daysInMonth);
 
-    const totalBar = document.getElementById("totalItemsBar");
-    const completedBar = document.getElementById("completedBar");
-    const inProgressBar = document.getElementById("inProgressBar");
-    const pendingBar = document.getElementById("pendingBar");
-
-    const targetBase = monthlyTarget || 1;
-    const totalRatio = Math.min(1, totalItems / targetBase);
-    totalBar.style.width = (totalRatio * 100) + "%";
-    completedBar.style.width = completedPct + "%";
-    inProgressBar.style.width = inProgressPct + "%";
-    pendingBar.style.width = pendingPct + "%";
+    $("totalItemsBar").style.width = (Math.min(1, totalItems / (monthlyTarget || 1)) * 100) + "%";
+    $("completedBar").style.width = completedPct + "%";
+    $("inProgressBar").style.width = inProgressPct + "%";
+    $("pendingBar").style.width = pendingPct + "%";
 
     updateConsistencyText(data, daysInMonth);
+    updateAlert(totalItems, completed, inProgress, pending);
   }
 
   function updateTargetSummary(totalItems, daysInMonth) {
-    const targetSummary = document.getElementById("targetSummary");
     const remaining = Math.max(0, monthlyTarget - totalItems);
     const pct = monthlyTarget ? Math.round((totalItems / monthlyTarget) * 100) : 0;
 
+    const monthFilterVal = $("monthFilter").value || "";
+    const [y, m] = monthFilterVal.split("-").map(Number);
     const today = new Date();
-    const currentDay = today.getDate();
-    const remainingDays = Math.max(0, daysInMonth - currentDay + 1);
-    const neededPerDay = remainingDays > 0 ? (remaining / remainingDays) : remaining;
+    let remainingDays = daysInMonth;
 
-    targetSummary.textContent =
-      `${totalItems}/${monthlyTarget} items • ${pct}% reached • ${remaining} left (${neededPerDay.toFixed(1)}/day needed)`;
+    if (today.getFullYear() === y && (today.getMonth() + 1) === m) {
+      remainingDays = Math.max(0, daysInMonth - today.getDate() + 1);
+    }
+
+    const neededPerDay = remainingDays > 0 ? (remaining / remainingDays) : remaining;
+    $("targetSummary").textContent = `${totalItems}/${monthlyTarget} • ${pct}% • ${remaining} left (${neededPerDay.toFixed(1)}/day)`;
   }
 
   function updateConsistencyText(data, daysInMonth) {
-    const el = document.getElementById("consistencyText");
-    if (!data.length) {
-      el.textContent = "No activity recorded for this month in the current view.";
-      return;
-    }
+    const el = $("consistencyText");
+    if (!data.length) { el.textContent = "No activity recorded for this view."; return; }
 
-    const daySet = new Set();
-    data.forEach(row => daySet.add(row.date.getDate()));
-
+    const daySet = new Set(data.map(r => r.date.getDate()));
     const postingDays = daySet.size;
+    const daysSorted = Array.from(daySet).sort((a,b)=>a-b);
 
-    const daysSorted = Array.from(daySet).sort((a, b) => a - b);
-    let longest = 0, current = 0, prev = null;
-
+    let longest=0, cur=0, prev=null;
     daysSorted.forEach(d => {
-      if (prev === null || d === prev + 1) current++;
-      else current = 1;
-      if (current > longest) longest = current;
+      cur = (prev===null || d===prev+1) ? cur+1 : 1;
+      longest = Math.max(longest, cur);
       prev = d;
     });
 
-    el.textContent =
-      `Consistency: content on ${postingDays}/${daysInMonth} days • longest streak ${longest} day${longest !== 1 ? "s" : ""} in a row.`;
+    el.textContent = `Consistency: ${postingDays}/${daysInMonth} days • longest streak ${longest} day${longest!==1?"s":""}.`;
+  }
+
+  function updateAlert(total, completed, inProgress, pending) {
+    const el = $("insightAlert");
+    if (!total) { el.className="alert"; el.innerHTML="No items match this view. Try Reset."; return; }
+
+    const completedRate = completed / total;
+    const pendingRate = pending / total;
+
+    if (completedRate >= 0.6 && pendingRate <= 0.25) {
+      el.className = "alert good";
+      el.innerHTML = `<strong>Healthy pipeline.</strong> Completion ${(completedRate*100).toFixed(0)}% • Pending ${(pendingRate*100).toFixed(0)}%.`;
+    } else if (pendingRate >= 0.4) {
+      el.className = "alert bad";
+      el.innerHTML = `<strong>Backlog risk.</strong> Pending ${(pendingRate*100).toFixed(0)}% in this view — push edits.`;
+    } else {
+      el.className = "alert warn";
+      el.innerHTML = `<strong>Mixed state.</strong> Completed ${(completedRate*100).toFixed(0)}% • In edit ${(inProgress/total*100).toFixed(0)}%.`;
+    }
   }
 
   function updateCreatorStats(data) {
-    const container = document.getElementById("creatorStats");
+    const container = $("creatorStats");
     container.innerHTML = "";
 
     const counts = {};
-    data.forEach(row => {
-      const name = row.creator || "Unassigned";
-      if (!counts[name]) counts[name] = 0;
-      const status = normalizeStatus(row.status);
-      if (COMPLETED_STATUSES.includes(status)) counts[name]++;
+    data.forEach(r => {
+      const name = r.creator || "Unassigned";
+      counts[name] = counts[name] || { completed: 0, total: 0 };
+      counts[name].total++;
+      if (COMPLETED_STATUSES.includes(normalizeStatus(r.status))) counts[name].completed++;
     });
 
-    const totalCompleted = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const entries = Object.entries(counts).sort((a,b)=>b[1].completed-a[1].completed);
+    if (!entries.length) { container.innerHTML = `<li class="list-item"><span class="list-label">No items in this view.</span></li>`; return; }
 
-    if (!sorted.length) {
-      const li = document.createElement("li");
-      li.className = "list-item";
-      li.innerHTML = `<span class="list-label">No completed items in this view.</span>`;
-      container.appendChild(li);
-      return;
-    }
+    const totalCompleted = entries.reduce((s, [,v]) => s+v.completed, 0) || 1;
 
-    sorted.forEach(([name, count]) => {
-      const pct = Math.round((count / totalCompleted) * 100);
+    entries.forEach(([name, v]) => {
+      const pct = Math.round((v.completed/totalCompleted)*100);
       const li = document.createElement("li");
       li.className = "list-item";
       li.innerHTML = `
         <div>
-          <div class="list-label">${name}</div>
-          <div class="small">${pct}% of completed this month</div>
+          <div class="list-label">${escapeHtml(name)}</div>
+          <div class="small" style="margin-top:4px;">${v.completed} completed • ${v.total} total • ${pct}% share</div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span class="list-count">${count}</span>
-          <span class="list-chip">items</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="list-count">${v.completed}</span><span class="list-chip">done</span>
         </div>
       `;
       container.appendChild(li);
@@ -1254,284 +1352,41 @@
   }
 
   function updateStatusPlatformStats(data) {
-    const statusContainer = document.getElementById("statusStats");
-    const platformContainer = document.getElementById("platformStats");
+    const statusContainer = $("statusStats");
+    const platformContainer = $("platformStats");
     statusContainer.innerHTML = "";
     platformContainer.innerHTML = "";
 
     const statusCounts = {};
     const platformCounts = {};
-
-    data.forEach(row => {
-      const status = row.status || "Unknown";
-      const platform = row.platform || "Unassigned";
-      statusCounts[status] = (statusCounts[status] || 0) + 1;
-      platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+    data.forEach(r => {
+      const s = r.status || "Unknown";
+      const p = r.platform || "Unassigned";
+      statusCounts[s] = (statusCounts[s] || 0) + 1;
+      platformCounts[p] = (platformCounts[p] || 0) + 1;
     });
 
     const total = data.length || 1;
 
-    Object.entries(statusCounts)
-      .sort((a, b) => b[1] - a[1])
-      .forEach(([status, count]) => {
-        const pct = Math.round((count / total) * 100);
-        const li = document.createElement("li");
-        li.className = "list-item";
-        li.innerHTML = `
-          <div>
-            <div class="list-label">${status}</div>
-            <div class="small">${pct}% of items</div>
-          </div>
-          <span class="list-count">${count}</span>
-        `;
-        statusContainer.appendChild(li);
-      });
-
-    Object.entries(platformCounts)
-      .sort((a, b) => b[1] - a[1])
-      .forEach(([platform, count]) => {
-        const pct = Math.round((count / total) * 100);
-        const li = document.createElement("li");
-        li.className = "list-item";
-        li.innerHTML = `
-          <div>
-            <div class="list-label">${platform}</div>
-            <div class="small">${pct}% of items</div>
-          </div>
-          <span class="list-count">${count}</span>
-        `;
-        platformContainer.appendChild(li);
-      });
-  }
-
-  function formatDateDisplay(date) {
-    return date.toLocaleDateString(undefined, {
-      day: "2-digit",
-      month: "short",
-      year: "2-digit"
-    });
-  }
-
-  function getStatusClass(status) {
-    const s = normalizeStatus(status);
-    if (COMPLETED_STATUSES.includes(s)) return "status-completed";
-    if (INPROGRESS_STATUSES.includes(s)) return "status-in-progress";
-    if (PENDING_STATUSES.includes(s)) return "status-pending";
-    return "status-other";
-  }
-
-  function updateTable(data) {
-    const tbody = document.getElementById("tableBody");
-    const rowCount = document.getElementById("rowCount");
-    tbody.innerHTML = "";
-    rowCount.textContent = data.length.toString();
-
-    if (!data.length) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="9" style="text-align:center;color:#9ca3af;padding:14px;">No items match this view.</td>`;
-      tbody.appendChild(tr);
-      return;
-    }
-
-    data
-      .sort((a, b) => b.date - a.date)
-      .forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${formatDateDisplay(row.date)}</td>
-          <td>${row.creator || "-"}</td>
-          <td>${row.videoType || "-"}</td>
-          <td>${row.platform || "-"}</td>
-          <td>${row.location || "-"}</td>
-          <td>${row.topic || "-"}</td>
-          <td>
-            <span class="tag">${(row.DropboxLink_Script || "").toString().toLowerCase() === "yes" ? "Script Ready" : (row.DropboxLink_Script || "-")}</span>
-          </td>
-          <td>
-            <span class="status-pill ${getStatusClass(row.status)}">${row.status || "-"}</span>
-          </td>
-          <td>${row.caption || "-"}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-  }
-
-  function updateCharts(data) {
-    const creatorCounts = {};
-    const platformCounts = {};
-    const typeCounts = {};
-
-    data.forEach(row => {
-      const creator = row.creator || "Unassigned";
-      const platform = row.platform || "Unassigned";
-      const type = row.videoType || "Other";
-
-      creatorCounts[creator] = (creatorCounts[creator] || 0) + 1;
-      platformCounts[platform] = (platformCounts[platform] || 0) + 1;
-      typeCounts[type] = (typeCounts[type] || 0) + 1;
+    Object.entries(statusCounts).sort((a,b)=>b[1]-a[1]).forEach(([s,c]) => {
+      const li = document.createElement("li");
+      li.className = "list-item";
+      li.innerHTML = `<div><div class="list-label">${escapeHtml(s)}</div><div class="small" style="margin-top:4px;">${Math.round(c/total*100)}% of items</div></div><span class="list-count">${c}</span>`;
+      statusContainer.appendChild(li);
     });
 
-    const creatorLabels = Object.keys(creatorCounts);
-    const creatorValues = Object.values(creatorCounts);
-
-    const platformLabels = Object.keys(platformCounts);
-    const platformValues = Object.values(platformCounts);
-
-    const typeLabels = Object.keys(typeCounts);
-    const typeValues = Object.values(typeCounts);
-
-    const creatorCtx = document.getElementById("creatorChart").getContext("2d");
-    const platformCtx = document.getElementById("platformChart").getContext("2d");
-    const typeCtx = document.getElementById("typeChart").getContext("2d");
-
-    if (!creatorChartInstance) {
-      creatorChartInstance = new Chart(creatorCtx, {
-        type: "bar",
-        data: {
-          labels: creatorLabels,
-          datasets: [{
-            label: "Items",
-            data: creatorValues,
-            borderWidth: 1,
-            backgroundColor: "rgba(37,99,235,0.25)",
-            borderColor: "rgba(37,99,235,0.9)"
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-          plugins: { legend: { display: false } }
-        }
-      });
-    } else {
-      creatorChartInstance.data.labels = creatorLabels;
-      creatorChartInstance.data.datasets[0].data = creatorValues;
-      creatorChartInstance.update();
-    }
-
-    if (!platformChartInstance) {
-      platformChartInstance = new Chart(platformCtx, {
-        type: "bar",
-        data: {
-          labels: platformLabels,
-          datasets: [{
-            label: "Items",
-            data: platformValues,
-            borderWidth: 1,
-            backgroundColor: "rgba(16,185,129,0.25)",
-            borderColor: "rgba(5,150,105,0.9)"
-          }]
-        },
-        options: {
-          indexAxis: "y",
-          responsive: true,
-          scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
-          plugins: { legend: { display: false } }
-        }
-      });
-    } else {
-      platformChartInstance.data.labels = platformLabels;
-      platformChartInstance.data.datasets[0].data = platformValues;
-      platformChartInstance.update();
-    }
-
-    if (!typeChartInstance) {
-      typeChartInstance = new Chart(typeCtx, {
-        type: "bar",
-        data: {
-          labels: typeLabels,
-          datasets: [{
-            label: "Items",
-            data: typeValues,
-            borderWidth: 1,
-            backgroundColor: "rgba(129,140,248,0.25)",
-            borderColor: "rgba(79,70,229,0.9)"
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-          plugins: { legend: { display: false } }
-        }
-      });
-    } else {
-      typeChartInstance.data.labels = typeLabels;
-      typeChartInstance.data.datasets[0].data = typeValues;
-      typeChartInstance.update();
-    }
-  }
-
-  function getStatusFilterLabel(val) {
-    if (!val) return "all statuses";
-    if (val === "completed") return "completed items only";
-    if (val === "in-progress") return "in-progress items only";
-    if (val === "pending") return "pending/backlog items only";
-    if (val === "other") return "items with other statuses";
-    return "all statuses";
-  }
-
-  function updateSummaryText(data, context) {
-    const el = document.getElementById("autoSummary");
-    if (!data.length) {
-      el.textContent = "No content found for this combination of month and filters.";
-      return;
-    }
-
-    const { monthLabel, creator, statusFilterVal, platformLabel } = context;
-
-    const totalItems = data.length;
-    let completed = 0, inProgress = 0, pending = 0;
-
-    const platformCounts = {};
-    const topicCounts = {};
-
-    data.forEach(row => {
-      const status = normalizeStatus(row.status);
-      if (COMPLETED_STATUSES.includes(status)) completed++;
-      else if (INPROGRESS_STATUSES.includes(status)) inProgress++;
-      else if (PENDING_STATUSES.includes(status)) pending++;
-
-      const platform = row.platform || "Unassigned";
-      platformCounts[platform] = (platformCounts[platform] || 0) + 1;
-
-      const topicKey = row.topic || "Unspecified topic";
-      topicCounts[topicKey] = (topicCounts[topicKey] || 0) + 1;
+    Object.entries(platformCounts).sort((a,b)=>b[1]-a[1]).forEach(([p,c]) => {
+      const li = document.createElement("li");
+      li.className = "list-item";
+      li.innerHTML = `<div><div class="list-label">${escapeHtml(p)}</div><div class="small" style="margin-top:4px;">${Math.round(c/total*100)}% of items</div></div><span class="list-count">${c}</span>`;
+      platformContainer.appendChild(li);
     });
-
-    const completedPct = Math.round((completed / (totalItems || 1)) * 100);
-
-    const mainPlatform = Object.entries(platformCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
-    const topTopic = Object.entries(topicCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
-
-    const creatorText = creator ? ` for <strong>${creator}</strong>` : "";
-    const statusText = getStatusFilterLabel(statusFilterVal);
-    const platformText = platformLabel ? ` on <strong>${platformLabel}</strong>` : (mainPlatform ? `, mostly on <strong>${mainPlatform}</strong>` : "");
-    const topicText = topTopic ? ` Top topic in this view is <strong>${topTopic}</strong>.` : "";
-
-    const dayText = selectedDayKey ? ` <strong>Day filter:</strong> ${selectedDayKey}.` : "";
-
-    el.innerHTML =
-      `In <strong>${monthLabel}</strong>${creatorText}, you have <strong>${totalItems}</strong> items in this view, with ` +
-      `<strong>${completed}</strong> completed (${completedPct}% of the total). ` +
-      `Filters are showing <strong>${statusText}</strong>${platformText}.` +
-      topicText + dayText;
-  }
-
-  /* ======================
-     Calendar (NEW)
-     ====================== */
-  function pad2(n) { return String(n).padStart(2, "0"); }
-
-  function dateToDayKey(date) {
-    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
   }
 
   function buildWeekdayHeader() {
-    const container = document.getElementById("calendarWeekdays");
-    if (!container) return;
+    const container = $("calendarWeekdays");
     container.innerHTML = "";
-    const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-    labels.forEach(l => {
+    ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(l => {
       const div = document.createElement("div");
       div.className = "calendar-weekday";
       div.textContent = l;
@@ -1539,121 +1394,387 @@
     });
   }
 
-  function startDayOffsetMonFirst(dateObj) {
-    // JS getDay(): Sun=0..Sat=6. Convert to Mon-first: Mon=0..Sun=6.
-    const d = dateObj.getDay();
-    return (d + 6) % 7;
-  }
+  function startDayOffsetMonFirst(dateObj) { return (dateObj.getDay() + 6) % 7; }
 
   function summarizeDayStatuses(items) {
-    let c = 0, ip = 0, p = 0, o = 0;
-    items.forEach(row => {
-      const s = normalizeStatus(row.status);
+    let c=0, ip=0, p=0, o=0;
+    items.forEach(r => {
+      const s = normalizeStatus(r.status);
       if (COMPLETED_STATUSES.includes(s)) c++;
       else if (INPROGRESS_STATUSES.includes(s)) ip++;
       else if (PENDING_STATUSES.includes(s)) p++;
       else o++;
     });
-
-    const nonZeroBuckets = [c, ip, p, o].filter(x => x > 0).length;
-    let flavor = "mixed";
-    if (nonZeroBuckets <= 1) {
-      if (c) flavor = "completed";
-      else if (ip) flavor = "inprogress";
-      else if (p) flavor = "pending";
-      else flavor = "mixed";
-    }
-    return { c, ip, p, o, flavor };
+    return { c, ip, p, o };
   }
 
-  function updateCalendarView(filteredData, monthKey) {
-    const grid = document.getElementById("calendarGrid");
-    const label = document.getElementById("calendarMonthLabel");
-    const hint = document.getElementById("calendarHint");
-    if (!grid || !label) return;
-
+  function updateCalendarView(filteredData, monthOnlyData, monthKey) {
+    const grid = $("calendarGrid");
+    $("calendarMonthLabel").textContent = formatMonthLabelFromKey(monthKey);
     buildWeekdayHeader();
+    grid.innerHTML = "";
 
     const [y, m] = monthKey.split("-").map(Number);
-    label.textContent = formatMonthLabelFromKey(monthKey);
-
     const first = new Date(y, m - 1, 1);
     const daysInMonth = new Date(y, m, 0).getDate();
     const offset = startDayOffsetMonFirst(first);
 
     const byDay = {};
-    filteredData.forEach(row => {
-      const key = dateToDayKey(row.date);
-      byDay[key] = byDay[key] || [];
-      byDay[key].push(row);
+    filteredData.forEach(r => ((byDay[dateToDayKey(r.date)] ||= []).push(r)));
+
+    const monthCounts = {};
+    monthOnlyData.forEach(r => {
+      const k = dateToDayKey(r.date);
+      monthCounts[k] = (monthCounts[k] || 0) + 1;
     });
+    const maxCount = Math.max(1, ...Object.values(monthCounts));
 
-    if (hint) {
-      hint.innerHTML = selectedDayKey
-        ? `Showing only <strong>${selectedDayKey}</strong> (click again to clear).`
-        : `Click a day to filter the table/charts to that exact date.`;
-    }
+    const todayKey = dateToDayKey(new Date());
+    $("calendarHint").innerHTML = selectedDayKey ? `Filtering to <strong>${selectedDayKey}</strong>. Click again to clear.` : `Click a day to filter. Hover for breakdown.`;
 
-    grid.innerHTML = "";
-
-    for (let i = 0; i < offset; i++) {
+    for (let i=0;i<offset;i++) {
       const blank = document.createElement("div");
       blank.className = "calendar-cell muted";
-      blank.innerHTML = `<div class="calendar-date"> </div><div class="calendar-meta"></div>`;
+      blank.innerHTML = `<div class="calendar-date">&nbsp;</div><div class="calendar-meta"></div>`;
       grid.appendChild(blank);
     }
 
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dt = new Date(y, m - 1, d);
+    for (let d=1; d<=daysInMonth; d++) {
+      const dt = new Date(y, m-1, d);
       const dayKey = dateToDayKey(dt);
+
       const items = byDay[dayKey] || [];
-
-      const { c, ip, p, o, flavor } = summarizeDayStatuses(items);
       const total = items.length;
+      const baseCount = monthCounts[dayKey] || 0;
+      const intensity = clamp(baseCount / maxCount, 0, 1);
+      const { c, ip, p, o } = summarizeDayStatuses(items);
 
-      const cell = document.createElement("button");
-      cell.type = "button";
-      cell.className = "calendar-cell";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "calendar-cell";
+      if (dayKey === todayKey) btn.classList.add("today");
+      if (selectedDayKey === dayKey) btn.classList.add("active");
 
-      if (selectedDayKey === dayKey) {
-        cell.style.borderColor = "rgba(37,99,235,0.65)";
-        cell.style.boxShadow = "0 0 0 2px rgba(37,99,235,0.18)";
-        cell.style.background = "#eef2ff";
-      }
+      const heat = document.createElement("div");
+      heat.className = "heat";
+      heat.style.opacity = (0.06 + intensity * 0.40).toFixed(2);
+      btn.appendChild(heat);
 
-      let dotHtml = "";
-      if (total > 0) {
-        if (flavor === "completed") dotHtml = `<span class="dot dot-completed" title="Completed"></span>`;
-        else if (flavor === "inprogress") dotHtml = `<span class="dot dot-inprogress" title="In Edit"></span>`;
-        else if (flavor === "pending") dotHtml = `<span class="dot dot-pending" title="Pending"></span>`;
-        else dotHtml = `<span class="dot dot-mixed" title="Mixed statuses"></span>`;
-      }
-
-      cell.innerHTML = `
-        <div class="calendar-date">${d}</div>
-        <div class="calendar-meta">
-          <div class="calendar-dots">${dotHtml}</div>
-          <div class="calendar-count">${total ? total : ""}</div>
-        </div>
+      const inner = document.createElement("div");
+      inner.style.position = "relative";
+      inner.style.zIndex = "1";
+      inner.innerHTML = `
+        <div class="calendar-date"><span>${d}</span><span class="calendar-badge">${baseCount}</span></div>
+        <div class="calendar-meta"><span class="calendar-count">${total ? total : ""}</span></div>
       `;
+      btn.appendChild(inner);
 
-      const breakdown = total
-        ? `Total ${total} • Completed ${c}, In Edit ${ip}, Pending ${p}, Other ${o}`
-        : `No items`;
-      cell.title = `${dayKey}\n${breakdown}`;
-      cell.setAttribute("aria-label", `${dayKey}. ${breakdown}`);
-
-      cell.addEventListener("click", () => {
+      btn.addEventListener("click", () => {
         selectedDayKey = (selectedDayKey === dayKey) ? "" : dayKey;
-        renderDashboard();
+        saveState(); renderDashboard();
       });
+      btn.addEventListener("mousemove", (e) => showTooltip(e.clientX, e.clientY, tooltipHtml(dayKey, baseCount, total, c, ip, p, o)));
+      btn.addEventListener("mouseleave", hideTooltip);
 
-      if (!total) cell.style.opacity = "0.75";
-
-      grid.appendChild(cell);
+      grid.appendChild(btn);
     }
   }
-  /* ====================== */
+
+  function tooltipHtml(dayKey, monthTotal, total, c, ip, p, o) {
+    return `
+      <div><strong>${dayKey}</strong></div>
+      <div class="muted">Month total on this day: <strong>${monthTotal}</strong></div>
+      <div class="row"><span class="k">In this view</span><span class="v">${total}</span></div>
+      <div class="row"><span class="k">Completed</span><span class="v">${c}</span></div>
+      <div class="row"><span class="k">In edit</span><span class="v">${ip}</span></div>
+      <div class="row"><span class="k">Pending</span><span class="v">${p}</span></div>
+      <div class="row"><span class="k">Other</span><span class="v">${o}</span></div>
+      <div class="muted" style="margin-top:8px;">Click to filter by this date.</div>
+    `;
+  }
+
+  function showTooltip(x, y, html) {
+    const tip = $("tooltip");
+    tip.innerHTML = html;
+    const margin = 12;
+    const w = tip.offsetWidth;
+    const h = tip.offsetHeight;
+
+    let left = x + margin;
+    let top = y + margin;
+    if (left + w > window.innerWidth - margin) left = x - w - margin;
+    if (top + h > window.innerHeight - margin) top = y - h - margin;
+
+    tip.style.transform = `translate(${left}px, ${top}px)`;
+  }
+  function hideTooltip() { $("tooltip").style.transform = "translate(-9999px, -9999px)"; }
+
+  function updateInsights(data, monthKey) {
+    const list = $("insightsList");
+    const tag = $("insightsTag");
+    list.innerHTML = "";
+    tag.textContent = selectedDayKey ? `Day: ${selectedDayKey}` : formatMonthLabelFromKey(monthKey);
+
+    if (!data.length) { list.innerHTML = `<li class="list-item"><div class="list-label">No insights — empty view.</div><span class="list-chip">Try reset</span></li>`; return; }
+
+    let completed=0, inEdit=0, pending=0, other=0;
+    const creatorCompleted = {};
+    const platformCounts = {};
+    const dayCounts = {};
+
+    data.forEach(r => {
+      const st = normalizeStatus(r.status);
+      if (COMPLETED_STATUSES.includes(st)) completed++;
+      else if (INPROGRESS_STATUSES.includes(st)) inEdit++;
+      else if (PENDING_STATUSES.includes(st)) pending++;
+      else other++;
+
+      const cr = r.creator || "Unassigned";
+      creatorCompleted[cr] = creatorCompleted[cr] || 0;
+      if (COMPLETED_STATUSES.includes(st)) creatorCompleted[cr]++;
+
+      const pl = r.platform || "Unassigned";
+      platformCounts[pl] = (platformCounts[pl] || 0) + 1;
+
+      const dk = dateToDayKey(r.date);
+      dayCounts[dk] = (dayCounts[dk] || 0) + 1;
+    });
+
+    const total = data.length;
+    const completionRate = total ? completed/total : 0;
+    const pendingRate = total ? pending/total : 0;
+    const activeDays = Object.keys(dayCounts).length || 1;
+    const velocity = completed/activeDays;
+
+    const topCreator = Object.entries(creatorCompleted).sort((a,b)=>b[1]-a[1])[0] || ["–",0];
+    const topPlatform = Object.entries(platformCounts).sort((a,b)=>b[1]-a[1])[0] || ["–",0];
+    const mostActiveDay = Object.entries(dayCounts).sort((a,b)=>b[1]-a[1])[0] || ["–",0];
+
+    let riskText = "Low", emoji = "✅";
+    if (pendingRate >= 0.45) { riskText="High"; emoji="⚠️"; }
+    else if (pendingRate >= 0.30) { riskText="Medium"; emoji="🟠"; }
+
+    const items = [
+      ["Top creator (completed)", `${escapeHtml(topCreator[0])} • ${topCreator[1]}`],
+      ["Most used platform", `${escapeHtml(topPlatform[0])} • ${topPlatform[1]} items`],
+      ["Most active day", `${mostActiveDay[0]} • ${mostActiveDay[1]} items`],
+      ["Completion velocity", `${velocity.toFixed(2)} completed / active day`],
+      ["Completion rate", `${(completionRate*100).toFixed(0)}%`],
+      ["Backlog risk", `${emoji} ${riskText} • ${(pendingRate*100).toFixed(0)}% pending`],
+    ];
+
+    items.forEach(([k,v]) => {
+      const li = document.createElement("li");
+      li.className = "list-item";
+      li.innerHTML = `<div><div class="list-label">${k}</div><div class="small" style="margin-top:4px;color:#475569;">${v}</div></div><span class="list-chip">Insight</span>`;
+      list.appendChild(li);
+    });
+  }
+
+  function sortRows(data) {
+    const arr = [...data];
+    const safe = (x) => (x || "").toString().toLowerCase();
+    const statusKey = (s) => safe(s);
+
+    arr.sort((a,b) => {
+      if (sortMode === "date-desc") return b.date - a.date;
+      if (sortMode === "date-asc") return a.date - b.date;
+      if (sortMode === "creator-asc") return safe(a.creator).localeCompare(safe(b.creator));
+      if (sortMode === "platform-asc") return safe(a.platform).localeCompare(safe(b.platform));
+      if (sortMode === "status-asc") return statusKey(a.status).localeCompare(statusKey(b.status));
+      return b.date - a.date;
+    });
+    return arr;
+  }
+
+  function updateTable(data) {
+    const tbody = $("tableBody");
+    $("rowCount").textContent = String(data.length);
+    tbody.innerHTML = "";
+
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:16px;">No items match this view. Try Reset or clear Day filter.</td></tr>`;
+      return;
+    }
+
+    sortRows(data).forEach(row => {
+      const linkText = (row.DropboxLink_Script || "").toString().trim();
+      const isScriptReady = linkText.toLowerCase() === "yes";
+      const linkCell = isScriptReady
+        ? `<span class="tag">Script Ready</span>`
+        : (isProbablyUrl(linkText)
+          ? `<a class="tag" href="${escapeAttr(linkText)}" target="_blank" rel="noopener noreferrer">${escapeHtml(shorten(linkText, 38))}</a>`
+          : `<span class="tag" title="${escapeAttr(linkText || "-")}">${escapeHtml(shorten(linkText || "-", 38))}</span>`);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${formatDateDisplay(row.date)}</td>
+        <td>${escapeHtml(row.creator || "-")}</td>
+        <td>${escapeHtml(row.videoType || "-")}</td>
+        <td>${escapeHtml(row.platform || "-")}</td>
+        <td>${escapeHtml(row.location || "-")}</td>
+        <td>${escapeHtml(row.topic || "-")}</td>
+        <td>${linkCell}</td>
+        <td><span class="status-pill ${getStatusClass(row.status)}">${escapeHtml(row.status || "-")}</span></td>
+        <td>${escapeHtml(row.caption || "-")}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportCurrentViewCsv() {
+    const monthKey = $("monthFilter").value || months[months.length - 1];
+    const creator = $("creatorFilter").value;
+    const statusFilterVal = $("statusFilter").value;
+
+    const current = allData.filter(row => {
+      const sameMonth = getMonthKey(row.date) === monthKey;
+      const sameCreator = !creator || row.creator === creator;
+      const matchesPlatform = !selectedPlatform || (row.platform || "Unassigned") === selectedPlatform;
+
+      const textToSearch = [row.topic,row.platform,row.location,row.videoType,row.creator,row.status,row.caption].join(" ").toLowerCase();
+      const matchesSearch = !searchTerm || textToSearch.includes(searchTerm);
+      const matchesStatus = statusMatchesFilter(row.status, statusFilterVal);
+      const matchesDay = !selectedDayKey || dateToDayKey(row.date) === selectedDayKey;
+
+      return sameMonth && sameCreator && matchesPlatform && matchesSearch && matchesStatus && matchesDay;
+    });
+
+    const rows = sortRows(current).map(r => [
+      dateToDayKey(r.date),
+      r.creator || "",
+      r.videoType || "",
+      r.platform || "",
+      r.location || "",
+      r.topic || "",
+      r.DropboxLink_Script || "",
+      r.status || "",
+      r.caption || ""
+    ]);
+
+    const csv = toCsv([["Date","Creator","Video Type","Platform","Location","Topic","Dropbox Link / Script","Status","Caption"], ...rows]);
+    const filename = `content_log_${monthKey}${selectedDayKey ? "_" + selectedDayKey : ""}.csv`;
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function toCsv(rows) {
+    return rows.map(r => r.map(cell => {
+      const s = (cell ?? "").toString().replace(/"/g, '""');
+      return /[",\n]/.test(s) ? `"${s}"` : s;
+    }).join(",")).join("\n");
+  }
+
+  function updateCharts(data) {
+    const creatorCounts = {}, platformCounts = {}, typeCounts = {};
+    data.forEach(r => {
+      creatorCounts[r.creator || "Unassigned"] = (creatorCounts[r.creator || "Unassigned"] || 0) + 1;
+      platformCounts[r.platform || "Unassigned"] = (platformCounts[r.platform || "Unassigned"] || 0) + 1;
+      typeCounts[r.videoType || "Other"] = (typeCounts[r.videoType || "Other"] || 0) + 1;
+    });
+
+    const commonOpts = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } }
+    };
+
+    const creatorCtx = $("creatorChart").getContext("2d");
+    const platformCtx = $("platformChart").getContext("2d");
+    const typeCtx = $("typeChart").getContext("2d");
+
+    if (!creatorChartInstance) {
+      creatorChartInstance = new Chart(creatorCtx, {
+        type: "bar",
+        data: { labels: Object.keys(creatorCounts), datasets: [{ data: Object.values(creatorCounts), borderWidth: 1, borderRadius: 10, backgroundColor: "rgba(37,99,235,0.22)", borderColor: "rgba(37,99,235,0.75)" }] },
+        options: { ...commonOpts, scales: { y: { beginAtZero:true, ticks:{ precision:0 } } } }
+      });
+    } else {
+      creatorChartInstance.data.labels = Object.keys(creatorCounts);
+      creatorChartInstance.data.datasets[0].data = Object.values(creatorCounts);
+      creatorChartInstance.update();
+    }
+
+    if (!platformChartInstance) {
+      platformChartInstance = new Chart(platformCtx, {
+        type: "bar",
+        data: { labels: Object.keys(platformCounts), datasets: [{ data: Object.values(platformCounts), borderWidth: 1, borderRadius: 10, backgroundColor: "rgba(34,197,94,0.20)", borderColor: "rgba(34,197,94,0.75)" }] },
+        options: { ...commonOpts, indexAxis: "y", scales: { x: { beginAtZero:true, ticks:{ precision:0 } } } }
+      });
+    } else {
+      platformChartInstance.data.labels = Object.keys(platformCounts);
+      platformChartInstance.data.datasets[0].data = Object.values(platformCounts);
+      platformChartInstance.update();
+    }
+
+    if (!typeChartInstance) {
+      typeChartInstance = new Chart(typeCtx, {
+        type: "bar",
+        data: { labels: Object.keys(typeCounts), datasets: [{ data: Object.values(typeCounts), borderWidth: 1, borderRadius: 10, backgroundColor: "rgba(124,58,237,0.18)", borderColor: "rgba(124,58,237,0.75)" }] },
+        options: { ...commonOpts, scales: { y: { beginAtZero:true, ticks:{ precision:0 } } } }
+      });
+    } else {
+      typeChartInstance.data.labels = Object.keys(typeCounts);
+      typeChartInstance.data.datasets[0].data = Object.values(typeCounts);
+      typeChartInstance.update();
+    }
+  }
+
+  function getStatusFilterLabel(val) {
+    if (!val) return "all statuses";
+    if (val === "completed") return "completed only";
+    if (val === "in-progress") return "in-edit only";
+    if (val === "pending") return "pending/backlog only";
+    if (val === "other") return "other statuses";
+    return "all statuses";
+  }
+
+  function updateSummaryText(data, ctx) {
+    const el = $("autoSummary");
+    if (!data.length) { el.textContent = "No content found for this combination of month and filters."; return; }
+
+    const total = data.length;
+    let completed = 0;
+    const platformCounts = {};
+    const topicCounts = {};
+
+    data.forEach(r => {
+      if (COMPLETED_STATUSES.includes(normalizeStatus(r.status))) completed++;
+      const pl = r.platform || "Unassigned";
+      platformCounts[pl] = (platformCounts[pl] || 0) + 1;
+      const tp = r.topic || "Unspecified topic";
+      topicCounts[tp] = (topicCounts[tp] || 0) + 1;
+    });
+
+    const mainPlatform = Object.entries(platformCounts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    const topTopic = Object.entries(topicCounts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+
+    const creatorText = ctx.creator ? ` for <strong>${escapeHtml(ctx.creator)}</strong>` : "";
+    const statusText = getStatusFilterLabel(ctx.statusFilterVal);
+    const platformText = ctx.platformLabel ? ` on <strong>${escapeHtml(ctx.platformLabel)}</strong>` : (mainPlatform ? `, mostly on <strong>${escapeHtml(mainPlatform)}</strong>` : "");
+    const dayText = selectedDayKey ? ` <strong>Day:</strong> ${selectedDayKey}.` : "";
+
+    el.innerHTML =
+      `In <strong>${ctx.monthLabel}</strong>${creatorText}, you have <strong>${total}</strong> items in this view, with ` +
+      `<strong>${completed}</strong> completed (${Math.round((completed/total)*100)}%). ` +
+      `Filters: <strong>${statusText}</strong>${platformText}.` +
+      (topTopic ? ` Top topic: <strong>${escapeHtml(topTopic)}</strong>.` : "") +
+      dayText;
+  }
+
+  function escapeHtml(str) {
+    return (str ?? "").toString()
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+  function escapeAttr(str) { return escapeHtml(str).replaceAll("`","&#096;"); }
+  function shorten(s,n){ s=(s??"").toString(); return s.length<=n?s:s.slice(0,n-1)+"…"; }
+  function isProbablyUrl(s) { try { const u=new URL((s||"").trim()); return u.protocol==="http:"||u.protocol==="https:"; } catch { return false; } }
 
   async function init() {
     allData = await fetchSheetData();
