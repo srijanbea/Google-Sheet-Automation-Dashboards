@@ -1,5 +1,5 @@
 # Content Creators Dashboard
-
+ This is Vibes Coding Project but it will make your daily task so easy !!!
 A lightweight analytics dashboard for tracking monthly work done by content creators.
 
 The dashboard reads from a **Google Sheet** (via a small **Google Apps Script JSON API**) and shows:
