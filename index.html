@@ -21,11 +21,7 @@
       --shadow-soft: 0 18px 45px rgba(15,23,42,0.08);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
@@ -37,10 +33,7 @@
       justify-content: center;
     }
 
-    .app {
-      width: 100%;
-      max-width: 100%;
-    }
+    .app { width: 100%; max-width: 100%; }
 
     .shell {
       background: linear-gradient(135deg, rgba(255,255,255,1), rgba(219,234,254,0.9));
@@ -67,21 +60,11 @@
       width: 100%;
     }
 
-    .title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .title-block { display: flex; flex-direction: column; gap: 8px; }
 
-    .brand-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .brand-row { display: flex; align-items: center; gap: 12px; }
 
-    .logo {
-      height: 34px;
-    }
+    .logo { height: 34px; }
 
     .title-chip {
       display: inline-flex;
@@ -115,14 +98,9 @@
       gap: 8px;
     }
 
-    h1 span.highlight {
-      color: var(--accent-strong);
-    }
+    h1 span.highlight { color: var(--accent-strong); }
 
-    .subtitle {
-      font-size: 13px;
-      color: var(--muted);
-    }
+    .subtitle { font-size: 13px; color: var(--muted); }
 
     .control-row {
       display: flex;
@@ -155,15 +133,9 @@
       border: 1px solid rgba(37,99,235,0.4);
     }
 
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
 
-    .select-wrapper {
-      position: relative;
-    }
+    .select-wrapper { position: relative; }
 
     .select-wrapper select {
       appearance: none;
@@ -195,9 +167,7 @@
       pointer-events: none;
     }
 
-    .search-wrapper {
-      position: relative;
-    }
+    .search-wrapper { position: relative; }
 
     .search-input {
       padding: 7px 26px 7px 11px;
@@ -210,9 +180,7 @@
       min-width: 180px;
     }
 
-    .search-input::placeholder {
-      color: #9ca3af;
-    }
+    .search-input::placeholder { color: #9ca3af; }
 
     .search-input:focus {
       border-color: var(--accent);
@@ -237,9 +205,7 @@
     }
 
     @media (max-width: 900px) {
-      main {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      main { grid-template-columns: minmax(0, 1fr); }
     }
 
     .card {
@@ -286,9 +252,7 @@
     }
 
     @media (max-width: 900px) {
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     .metric {
@@ -298,28 +262,11 @@
       border: 1px solid #e5e7eb;
     }
 
-    .metric-label {
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 3px;
-    }
+    .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+    .metric-value { font-size: 20px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 2px; }
 
-    .metric-value {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      margin-bottom: 2px;
-    }
-
-    .metric-sub {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .metric-sub span {
-      color: var(--accent-strong);
-      font-weight: 600;
-    }
+    .metric-sub { font-size: 11px; color: var(--muted); }
+    .metric-sub span { color: var(--accent-strong); font-weight: 600; }
 
     .progress-bar {
       width: 100%;
@@ -351,11 +298,7 @@
       font-size: 11px;
     }
 
-    .target-row-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+    .target-row-main { display: flex; flex-direction: column; gap: 2px; }
 
     .target-row-main span.label {
       text-transform: uppercase;
@@ -364,22 +307,10 @@
       font-weight: 500;
     }
 
-    .target-row-main span.value {
-      font-weight: 600;
-      color: var(--accent-strong);
-    }
+    .target-row-main span.value { font-weight: 600; color: var(--accent-strong); }
 
-    .target-input-wrap {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .target-input-wrap label {
-      color: var(--muted);
-      font-size: 11px;
-    }
+    .target-input-wrap { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .target-input-wrap label { color: var(--muted); font-size: 11px; }
 
     .target-input-wrap input {
       width: 70px;
@@ -404,15 +335,11 @@
     }
 
     @media (max-width: 1100px) {
-      .chart-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 900px) {
-      .chart-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      .chart-grid { grid-template-columns: minmax(0, 1fr); }
     }
 
     .chart-card {
@@ -441,9 +368,7 @@
       border: 1px dashed #c7d2fe;
     }
 
-    .summary-text strong {
-      color: var(--accent-strong);
-    }
+    .summary-text strong { color: var(--accent-strong); }
 
     .side-card {
       background: var(--card);
@@ -454,10 +379,7 @@
       width: 100%;
     }
 
-    .list {
-      list-style: none;
-      margin-top: 4px;
-    }
+    .list { list-style: none; margin-top: 4px; }
 
     .list-item {
       display: flex;
@@ -468,22 +390,10 @@
       transition: background 0.15s ease, transform 0.12s ease;
     }
 
-    .list-item:hover {
-      background: #eff6ff;
-      transform: translateY(-1px);
-    }
+    .list-item:hover { background: #eff6ff; transform: translateY(-1px); }
 
-    .list-label {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 500;
-    }
-
-    .list-count {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent-strong);
-    }
+    .list-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .list-count { font-size: 12px; font-weight: 600; color: var(--accent-strong); }
 
     .list-chip {
       font-size: 11px;
@@ -502,27 +412,14 @@
       width: 100%;
       max-height: 360px;
       overflow-y: auto;
-      overflow-x: auto; /* allow horizontal scroll on small screens */
+      overflow-x: hidden;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
 
-    thead {
-      position: sticky;
-      top: 0;
-      background: #f9fafb;
-      z-index: 2;
-    }
+    thead { position: sticky; top: 0; background: #f9fafb; z-index: 2; }
 
-    th, td {
-      padding: 7px 10px;
-      text-align: left;
-    }
-
+    th, td { padding: 7px 10px; text-align: left; }
     th {
       font-size: 11px;
       text-transform: uppercase;
@@ -533,17 +430,10 @@
       white-space: nowrap;
     }
 
-    td {
-      white-space: normal;
-    }
+    td { white-space: normal; }
 
-    tbody tr:nth-child(even) {
-      background: #f9fafb;
-    }
-
-    tbody tr:hover {
-      background: #eff6ff;
-    }
+    tbody tr:nth-child(even) { background: #f9fafb; }
+    tbody tr:hover { background: #eff6ff; }
 
     .status-pill {
       display: inline-flex;
@@ -553,29 +443,10 @@
       border: 1px solid transparent;
     }
 
-    .status-completed {
-      border-color: rgba(22,163,74,0.35);
-      color: #166534;
-      background: #dcfce7;
-    }
-
-    .status-in-progress {
-      border-color: rgba(37,99,235,0.35);
-      color: #1d4ed8;
-      background: #dbeafe;
-    }
-
-    .status-pending {
-      border-color: rgba(234,179,8,0.5);
-      color: #92400e;
-      background: #fef9c3;
-    }
-
-    .status-other {
-      border-color: #d1d5db;
-      color: var(--muted);
-      background: #f3f4f6;
-    }
+    .status-completed { border-color: rgba(22,163,74,0.35); color: #166534; background: #dcfce7; }
+    .status-in-progress { border-color: rgba(37,99,235,0.35); color: #1d4ed8; background: #dbeafe; }
+    .status-pending { border-color: rgba(234,179,8,0.5); color: #92400e; background: #fef9c3; }
+    .status-other { border-color: #d1d5db; color: var(--muted); background: #f3f4f6; }
 
     .tag {
       display: inline-flex;
@@ -585,21 +456,11 @@
       background: #f3f4f6;
       border: 1px solid #e5e7eb;
       color: var(--muted);
-      text-decoration: none;
     }
 
-    .small {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
+    .small { font-size: 11px; color: var(--muted); margin-top: 6px; }
 
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 
     .filter-chip {
       padding: 3px 10px;
@@ -612,10 +473,7 @@
       transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
     }
 
-    .filter-chip:hover {
-      background: #eff6ff;
-      transform: translateY(-1px);
-    }
+    .filter-chip:hover { background: #eff6ff; transform: translateY(-1px); }
 
     .filter-chip-active {
       background: #1d4ed8;
@@ -624,79 +482,128 @@
       box-shadow: 0 0 0 2px rgba(37,99,235,0.24);
     }
 
-    .error {
-      margin-top: 8px;
+    .error { margin-top: 8px; font-size: 12px; color: var(--danger); }
+
+    /* ===== Calendar (NEW) ===== */
+    .calendar-wrap {
+      margin-top: 10px;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      padding: 10px;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .calendar-weekday {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .calendar-cell {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      min-height: 52px;
+      padding: 6px 6px 7px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #f9fafb;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .calendar-cell:hover {
+      background: #eff6ff;
+      transform: translateY(-1px);
+    }
+
+    .calendar-cell.muted {
+      opacity: 0.45;
+      background: #f3f4f6;
+      cursor: default;
+    }
+
+    .calendar-date {
+      font-size: 11px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .calendar-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .calendar-count {
       font-size: 12px;
-      color: var(--danger);
+      font-weight: 700;
+      color: var(--accent-strong);
     }
 
-    /* Mobile-friendly Content Log (table as cards) */
-    @media (max-width: 700px) {
-      .card .card-header {
-        align-items: flex-start;
-      }
-
-      .table-wrap {
-        max-height: none;
-        border-radius: 14px;
-      }
-
-      table {
-        border-collapse: separate;
-        border-spacing: 0 6px;
-      }
-
-      thead {
-        display: none;
-      }
-
-      tbody tr {
-        display: block;
-        background: #f9fafb;
-        margin: 0 8px 8px;
-        border-radius: 12px;
-        padding: 6px 8px;
-        box-shadow: 0 2px 6px rgba(15,23,42,0.04);
-      }
-
-      tbody tr:nth-child(even) {
-        background: #f9fafb;
-      }
-
-      td {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 4px 0;
-        font-size: 11px;
-        border-bottom: 0;
-      }
-
-      td:last-child {
-        margin-bottom: 0;
-      }
-
-      td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-right: 10px;
-        flex: 0 0 45%;
-        max-width: 45%;
-      }
-
-      td span.tag,
-      td a.tag,
-      td span.status-pill {
-        white-space: nowrap;
-      }
-
-      .badge-soft {
-        font-size: 10px;
-      }
+    .calendar-dots {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
     }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .dot-completed { background: #22c55e; }
+    .dot-inprogress { background: #60a5fa; }
+    .dot-pending { background: #f59e0b; }
+    .dot-mixed { background: #a78bfa; }
+
+    .calendar-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .legend-completed { background: #22c55e; }
+    .legend-inprogress { background: #60a5fa; }
+    .legend-pending { background: #f59e0b; }
+    .legend-mixed { background: #a78bfa; }
+    /* ===== /Calendar ===== */
   </style>
 </head>
 <body>
@@ -739,7 +646,7 @@
               <select id="statusFilter">
                 <option value="">All Status</option>
                 <option value="completed">Completed</option>
-                <option value="in-progress">In Progress</option>
+                <option value="in-progress">In Edit</option>
                 <option value="pending">Pending</option>
                 <option value="other">Other</option>
               </select>
@@ -749,7 +656,7 @@
                 id="searchFilter"
                 class="search-input"
                 type="text"
-                placeholder="Search topic, platform, creator..."
+                placeholder="Search topic, platform, creator, caption..."
               />
               <span class="search-icon">🔍</span>
             </div>
@@ -854,9 +761,9 @@
                 <div class="card-title">Content Log</div>
                 <div class="chip-row" id="platformChipRow"></div>
               </div>
-              <div class="badge-soft">
-                Showing <span id="rowCount">–</span> items
-              </div>
+            </div>
+            <div class="badge-soft">
+              Showing <span id="rowCount">–</span> items
             </div>
             <div class="table-wrap">
               <table>
@@ -868,20 +775,19 @@
                   <th>Platform</th>
                   <th>Location</th>
                   <th>Topic</th>
-                  <th>Script</th>
+                  <th>Dropbox Link / Script</th>
                   <th>Status</th>
+                  <th>Caption</th>
                 </tr>
                 </thead>
-                <tbody id="tableBody">
-                <!-- rows injected here -->
-                </tbody>
+                <tbody id="tableBody"></tbody>
               </table>
             </div>
             <div id="errorMsg" class="error" style="display:none;"></div>
           </div>
         </section>
 
-        <!-- Right: per-creator and status/platform lists -->
+        <!-- Right: per-creator and status/platform lists + calendar -->
         <section>
           <div class="side-card">
             <div class="card-header" style="margin-bottom:4px;">
@@ -897,6 +803,30 @@
             </div>
             <ul class="list" id="statusStats"></ul>
             <ul class="list" id="platformStats" style="margin-top:6px; border-top:1px solid #e5e7eb; padding-top:4px;"></ul>
+          </div>
+
+          <!-- NEW: Calendar View below Status & Platforms -->
+          <div class="side-card" style="margin-top:12px;">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Calendar View</div>
+              <div class="badge-soft" id="calendarMonthLabel">–</div>
+            </div>
+
+            <div class="calendar-wrap">
+              <div class="calendar-weekdays" id="calendarWeekdays"></div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+
+            <div class="calendar-legend">
+              <span class="legend-item"><span class="legend-dot legend-completed"></span>Completed</span>
+              <span class="legend-item"><span class="legend-dot legend-inprogress"></span>In Edit</span>
+              <span class="legend-item"><span class="legend-dot legend-pending"></span>Pending</span>
+              <span class="legend-item"><span class="legend-dot legend-mixed"></span>Mixed</span>
+            </div>
+
+            <div class="small" id="calendarHint">
+              Each day shows how many items are on that date (from the sheet Date column). Click a day to filter.
+            </div>
           </div>
         </section>
       </main>
@@ -923,13 +853,17 @@
   let selectedPlatform = ""; // for platform chips
   let monthlyTarget = 60;
 
+  // NEW: calendar date filter (YYYY-MM-DD)
+  let selectedDayKey = "";
+
   let creatorChartInstance = null;
   let platformChartInstance = null;
   let typeChartInstance = null;
 
+  // UPDATED: added "in edit", "edit" to In Progress; "assign" to Pending
   const COMPLETED_STATUSES = ["completed", "done", "published", "posted"];
-  const INPROGRESS_STATUSES = ["in progress", "draft", "editing"];
-  const PENDING_STATUSES = ["pending", "todo", "backlog", "not started"];
+  const INPROGRESS_STATUSES = ["in progress", "draft", "editing", "in edit", "edit"];
+  const PENDING_STATUSES = ["pending", "todo", "backlog", "not started", "assign"];
 
   function parseGoogleDate(value) {
     if (!value) return null;
@@ -955,7 +889,7 @@
 
       for (const row of rows) {
         const c = row.c || [];
-        // Columns: Date, Video Type, Location, Topic, Script, Platform, Status, Creator
+        // Columns: Date, Video Type, Location, Topic, Script, Platform, Status, Creator, Caption
         const rawDate = c[0]?.v;
         if (!rawDate) continue;
 
@@ -967,10 +901,11 @@
           videoType: (c[1]?.v ?? "").toString(),
           location: (c[2]?.v ?? "").toString(),
           topic: (c[3]?.v ?? "").toString(),
-          script: (c[4]?.v ?? "").toString(),
+          DropboxLink_Script: (c[4]?.v ?? "").toString(),
           platform: (c[5]?.v ?? "").toString(),
           status: (c[6]?.v ?? "").toString(),
-          creator: (c[7]?.v ?? "Unassigned").toString()
+          creator: (c[7]?.v ?? "Unassigned").toString(),
+          caption: (c[8]?.v ?? "").toString()
         });
       }
       return data;
@@ -1001,15 +936,9 @@
     const s = normalizeStatus(rowStatus);
     if (!filterValue) return true;
 
-    if (filterValue === "completed") {
-      return COMPLETED_STATUSES.includes(s);
-    }
-    if (filterValue === "in-progress") {
-      return INPROGRESS_STATUSES.includes(s);
-    }
-    if (filterValue === "pending") {
-      return PENDING_STATUSES.includes(s);
-    }
+    if (filterValue === "completed") return COMPLETED_STATUSES.includes(s);
+    if (filterValue === "in-progress") return INPROGRESS_STATUSES.includes(s);
+    if (filterValue === "pending") return PENDING_STATUSES.includes(s);
     if (filterValue === "other") {
       return !COMPLETED_STATUSES.includes(s) &&
              !INPROGRESS_STATUSES.includes(s) &&
@@ -1067,7 +996,10 @@
 
     creatorCountBadge.textContent = creators.length.toString() || "0";
 
-    monthFilter.addEventListener("change", renderDashboard);
+    monthFilter.addEventListener("change", () => {
+      selectedDayKey = ""; // reset day when month changes
+      renderDashboard();
+    });
     creatorFilter.addEventListener("change", renderDashboard);
     statusFilter.addEventListener("change", renderDashboard);
 
@@ -1098,7 +1030,6 @@
       chip.textContent = label;
       chip.addEventListener("click", () => {
         selectedPlatform = value;
-        // re-render chip active states
         buildPlatformChips(platforms);
         renderDashboard();
       });
@@ -1106,10 +1037,7 @@
     }
 
     addChip("All platforms", "");
-
-    platforms.forEach(p => {
-      addChip(p, p);
-    });
+    platforms.forEach(p => addChip(p, p));
   }
 
   function showError(msg) {
@@ -1140,6 +1068,9 @@
     const creator = creatorFilter.value;
     const statusFilterVal = statusFilter.value;
 
+    // Guard: if day filter belongs to other month, clear it
+    if (selectedDayKey && !selectedDayKey.startsWith(monthKey + "-")) selectedDayKey = "";
+
     const monthLabel = formatMonthLabelFromKey(monthKey);
     document.getElementById("currentMonthLabel").textContent = `Month: ${monthLabel}`;
 
@@ -1156,13 +1087,25 @@
         row.location,
         row.videoType,
         row.creator,
-        row.status
+        row.status,
+        row.caption
       ].join(" ").toLowerCase();
 
       const matchesSearch = !searchTerm || textToSearch.includes(searchTerm);
       const matchesStatus = statusMatchesFilter(row.status, statusFilterVal);
 
-      return sameMonth && sameCreator && matchesSearch && matchesStatus && matchesPlatform;
+      // NEW: filter by selected calendar day if set
+      let matchesDay = true;
+      if (selectedDayKey) {
+        const y = Number(selectedDayKey.slice(0,4));
+        const m = Number(selectedDayKey.slice(5,7));
+        const d = Number(selectedDayKey.slice(8,10));
+        matchesDay = (row.date.getFullYear() === y) &&
+                     ((row.date.getMonth() + 1) === m) &&
+                     (row.date.getDate() === d);
+      }
+
+      return sameMonth && sameCreator && matchesSearch && matchesStatus && matchesPlatform && matchesDay;
     });
 
     updateSummaryCards(filtered, monthKey);
@@ -1170,6 +1113,7 @@
     updateStatusPlatformStats(filtered);
     updateTable(filtered);
     updateCharts(filtered);
+    updateCalendarView(filtered, monthKey); // NEW
     updateSummaryText(filtered, {
       monthLabel,
       creator,
@@ -1192,35 +1136,25 @@
       else if (PENDING_STATUSES.includes(status)) pending++;
     });
 
-    const totalElem = document.getElementById("totalItems");
-    const totalItemsPerDayElem = document.getElementById("totalItemsPerDay");
-    const completedElem = document.getElementById("completedItems");
-    const inProgressElem = document.getElementById("inProgressItems");
-    const pendingElem = document.getElementById("pendingItems");
-    const completedPctElem = document.getElementById("completedPct");
-    const inProgressPctElem = document.getElementById("inProgressPct");
-    const pendingPctElem = document.getElementById("pendingPct");
-
-    totalElem.textContent = totalItems.toString();
-    completedElem.textContent = completed.toString();
-    inProgressElem.textContent = inProgress.toString();
-    pendingElem.textContent = pending.toString();
+    document.getElementById("totalItems").textContent = totalItems.toString();
+    document.getElementById("completedItems").textContent = completed.toString();
+    document.getElementById("inProgressItems").textContent = inProgress.toString();
+    document.getElementById("pendingItems").textContent = pending.toString();
 
     const totalPctBase = totalItems || 1;
     const completedPct = Math.round((completed / totalPctBase) * 100);
     const inProgressPct = Math.round((inProgress / totalPctBase) * 100);
     const pendingPct = Math.round((pending / totalPctBase) * 100);
 
-    completedPctElem.textContent = `${completedPct}%`;
-    inProgressPctElem.textContent = `${inProgressPct}%`;
-    pendingPctElem.textContent = `${pendingPct}%`;
+    document.getElementById("completedPct").textContent = `${completedPct}%`;
+    document.getElementById("inProgressPct").textContent = `${inProgressPct}%`;
+    document.getElementById("pendingPct").textContent = `${pendingPct}%`;
 
     const [y, m] = monthKey.split("-").map(Number);
     const daysInMonth = new Date(y, m, 0).getDate();
     const perDay = totalItems ? (totalItems / daysInMonth) : 0;
-    totalItemsPerDayElem.textContent = perDay.toFixed(1);
+    document.getElementById("totalItemsPerDay").textContent = perDay.toFixed(1);
 
-    // Target summary & bar
     updateTargetSummary(totalItems, daysInMonth);
 
     const totalBar = document.getElementById("totalItemsBar");
@@ -1235,7 +1169,6 @@
     inProgressBar.style.width = inProgressPct + "%";
     pendingBar.style.width = pendingPct + "%";
 
-    // Consistency metrics
     updateConsistencyText(data, daysInMonth);
   }
 
@@ -1261,24 +1194,16 @@
     }
 
     const daySet = new Set();
-    data.forEach(row => {
-      daySet.add(row.date.getDate());
-    });
+    data.forEach(row => daySet.add(row.date.getDate()));
 
     const postingDays = daySet.size;
 
-    // Compute longest streak of consecutive days with items
     const daysSorted = Array.from(daySet).sort((a, b) => a - b);
-    let longest = 0;
-    let current = 0;
-    let prev = null;
+    let longest = 0, current = 0, prev = null;
 
     daysSorted.forEach(d => {
-      if (prev === null || d === prev + 1) {
-        current++;
-      } else {
-        current = 1;
-      }
+      if (prev === null || d === prev + 1) current++;
+      else current = 1;
       if (current > longest) longest = current;
       prev = d;
     });
@@ -1296,15 +1221,11 @@
       const name = row.creator || "Unassigned";
       if (!counts[name]) counts[name] = 0;
       const status = normalizeStatus(row.status);
-      if (COMPLETED_STATUSES.includes(status)) {
-        counts[name]++;
-      }
+      if (COMPLETED_STATUSES.includes(status)) counts[name]++;
     });
 
     const totalCompleted = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
-
-    const sorted = Object.entries(counts)
-      .sort((a, b) => b[1] - a[1]);
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
 
     if (!sorted.length) {
       const li = document.createElement("li");
@@ -1344,7 +1265,6 @@
     data.forEach(row => {
       const status = row.status || "Unknown";
       const platform = row.platform || "Unassigned";
-
       statusCounts[status] = (statusCounts[status] || 0) + 1;
       platformCounts[platform] = (platformCounts[platform] || 0) + 1;
     });
@@ -1400,7 +1320,6 @@
     return "status-other";
   }
 
-  // UPDATED: clickable Script links + mobile data-labels
   function updateTable(data) {
     const tbody = document.getElementById("tableBody");
     const rowCount = document.getElementById("rowCount");
@@ -1409,55 +1328,29 @@
 
     if (!data.length) {
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="8" style="text-align:center;color:#9ca3af;padding:14px;">No items match this view.</td>`;
+      tr.innerHTML = `<td colspan="9" style="text-align:center;color:#9ca3af;padding:14px;">No items match this view.</td>`;
       tbody.appendChild(tr);
       return;
-    }
-
-    // helper: build clickable script cell content
-    function buildScriptCell(scriptValue) {
-      const raw = (scriptValue || "").toString().trim();
-      if (!raw) {
-        return `<span class="tag">-</span>`;
-      }
-
-      // If it's a URL (or contains a URL), make it clickable
-      const urlMatch = raw.match(/https?:\/\/\S+/);
-      if (urlMatch) {
-        const href = urlMatch[0];
-        const display =
-          raw.length > 60 ? raw.slice(0, 57) + "…" : raw; // truncate a bit for UI
-        return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="tag">${display}</a>`;
-      }
-
-      // If they just put "Yes" in the sheet
-      if (raw.toLowerCase() === "yes") {
-        return `<span class="tag">Script Ready</span>`;
-      }
-
-      // Fallback: plain text tag
-      return `<span class="tag">${raw}</span>`;
     }
 
     data
       .sort((a, b) => b.date - a.date)
       .forEach(row => {
         const tr = document.createElement("tr");
-        const scriptCellHtml = buildScriptCell(row.script);
-
         tr.innerHTML = `
-          <td data-label="Date">${formatDateDisplay(row.date)}</td>
-          <td data-label="Creator">${row.creator || "-"}</td>
-          <td data-label="Video Type">${row.videoType || "-"}</td>
-          <td data-label="Platform">${row.platform || "-"}</td>
-          <td data-label="Location">${row.location || "-"}</td>
-          <td data-label="Topic">${row.topic || "-"}</td>
-          <td data-label="Script">
-            ${scriptCellHtml}
+          <td>${formatDateDisplay(row.date)}</td>
+          <td>${row.creator || "-"}</td>
+          <td>${row.videoType || "-"}</td>
+          <td>${row.platform || "-"}</td>
+          <td>${row.location || "-"}</td>
+          <td>${row.topic || "-"}</td>
+          <td>
+            <span class="tag">${(row.DropboxLink_Script || "").toString().toLowerCase() === "yes" ? "Script Ready" : (row.DropboxLink_Script || "-")}</span>
           </td>
-          <td data-label="Status">
+          <td>
             <span class="status-pill ${getStatusClass(row.status)}">${row.status || "-"}</span>
           </td>
+          <td>${row.caption || "-"}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1491,7 +1384,6 @@
     const platformCtx = document.getElementById("platformChart").getContext("2d");
     const typeCtx = document.getElementById("typeChart").getContext("2d");
 
-    // Creator chart
     if (!creatorChartInstance) {
       creatorChartInstance = new Chart(creatorCtx, {
         type: "bar",
@@ -1507,15 +1399,8 @@
         },
         options: {
           responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { precision: 0 }
-            }
-          },
-          plugins: {
-            legend: { display: false }
-          }
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+          plugins: { legend: { display: false } }
         }
       });
     } else {
@@ -1524,7 +1409,6 @@
       creatorChartInstance.update();
     }
 
-    // Platform chart
     if (!platformChartInstance) {
       platformChartInstance = new Chart(platformCtx, {
         type: "bar",
@@ -1541,15 +1425,8 @@
         options: {
           indexAxis: "y",
           responsive: true,
-          scales: {
-            x: {
-              beginAtZero: true,
-              ticks: { precision: 0 }
-            }
-          },
-          plugins: {
-            legend: { display: false }
-          }
+          scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
+          plugins: { legend: { display: false } }
         }
       });
     } else {
@@ -1558,7 +1435,6 @@
       platformChartInstance.update();
     }
 
-    // Type chart
     if (!typeChartInstance) {
       typeChartInstance = new Chart(typeCtx, {
         type: "bar",
@@ -1574,15 +1450,8 @@
         },
         options: {
           responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { precision: 0 }
-            }
-          },
-          plugins: {
-            legend: { display: false }
-          }
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+          plugins: { legend: { display: false } }
         }
       });
     } else {
@@ -1611,9 +1480,7 @@
     const { monthLabel, creator, statusFilterVal, platformLabel } = context;
 
     const totalItems = data.length;
-    let completed = 0;
-    let inProgress = 0;
-    let pending = 0;
+    let completed = 0, inProgress = 0, pending = 0;
 
     const platformCounts = {};
     const topicCounts = {};
@@ -1641,12 +1508,152 @@
     const platformText = platformLabel ? ` on <strong>${platformLabel}</strong>` : (mainPlatform ? `, mostly on <strong>${mainPlatform}</strong>` : "");
     const topicText = topTopic ? ` Top topic in this view is <strong>${topTopic}</strong>.` : "";
 
+    const dayText = selectedDayKey ? ` <strong>Day filter:</strong> ${selectedDayKey}.` : "";
+
     el.innerHTML =
       `In <strong>${monthLabel}</strong>${creatorText}, you have <strong>${totalItems}</strong> items in this view, with ` +
       `<strong>${completed}</strong> completed (${completedPct}% of the total). ` +
       `Filters are showing <strong>${statusText}</strong>${platformText}.` +
-      topicText;
+      topicText + dayText;
   }
+
+  /* ======================
+     Calendar (NEW)
+     ====================== */
+  function pad2(n) { return String(n).padStart(2, "0"); }
+
+  function dateToDayKey(date) {
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+  }
+
+  function buildWeekdayHeader() {
+    const container = document.getElementById("calendarWeekdays");
+    if (!container) return;
+    container.innerHTML = "";
+    const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    labels.forEach(l => {
+      const div = document.createElement("div");
+      div.className = "calendar-weekday";
+      div.textContent = l;
+      container.appendChild(div);
+    });
+  }
+
+  function startDayOffsetMonFirst(dateObj) {
+    // JS getDay(): Sun=0..Sat=6. Convert to Mon-first: Mon=0..Sun=6.
+    const d = dateObj.getDay();
+    return (d + 6) % 7;
+  }
+
+  function summarizeDayStatuses(items) {
+    let c = 0, ip = 0, p = 0, o = 0;
+    items.forEach(row => {
+      const s = normalizeStatus(row.status);
+      if (COMPLETED_STATUSES.includes(s)) c++;
+      else if (INPROGRESS_STATUSES.includes(s)) ip++;
+      else if (PENDING_STATUSES.includes(s)) p++;
+      else o++;
+    });
+
+    const nonZeroBuckets = [c, ip, p, o].filter(x => x > 0).length;
+    let flavor = "mixed";
+    if (nonZeroBuckets <= 1) {
+      if (c) flavor = "completed";
+      else if (ip) flavor = "inprogress";
+      else if (p) flavor = "pending";
+      else flavor = "mixed";
+    }
+    return { c, ip, p, o, flavor };
+  }
+
+  function updateCalendarView(filteredData, monthKey) {
+    const grid = document.getElementById("calendarGrid");
+    const label = document.getElementById("calendarMonthLabel");
+    const hint = document.getElementById("calendarHint");
+    if (!grid || !label) return;
+
+    buildWeekdayHeader();
+
+    const [y, m] = monthKey.split("-").map(Number);
+    label.textContent = formatMonthLabelFromKey(monthKey);
+
+    const first = new Date(y, m - 1, 1);
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const offset = startDayOffsetMonFirst(first);
+
+    const byDay = {};
+    filteredData.forEach(row => {
+      const key = dateToDayKey(row.date);
+      byDay[key] = byDay[key] || [];
+      byDay[key].push(row);
+    });
+
+    if (hint) {
+      hint.innerHTML = selectedDayKey
+        ? `Showing only <strong>${selectedDayKey}</strong> (click again to clear).`
+        : `Click a day to filter the table/charts to that exact date.`;
+    }
+
+    grid.innerHTML = "";
+
+    for (let i = 0; i < offset; i++) {
+      const blank = document.createElement("div");
+      blank.className = "calendar-cell muted";
+      blank.innerHTML = `<div class="calendar-date"> </div><div class="calendar-meta"></div>`;
+      grid.appendChild(blank);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dt = new Date(y, m - 1, d);
+      const dayKey = dateToDayKey(dt);
+      const items = byDay[dayKey] || [];
+
+      const { c, ip, p, o, flavor } = summarizeDayStatuses(items);
+      const total = items.length;
+
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "calendar-cell";
+
+      if (selectedDayKey === dayKey) {
+        cell.style.borderColor = "rgba(37,99,235,0.65)";
+        cell.style.boxShadow = "0 0 0 2px rgba(37,99,235,0.18)";
+        cell.style.background = "#eef2ff";
+      }
+
+      let dotHtml = "";
+      if (total > 0) {
+        if (flavor === "completed") dotHtml = `<span class="dot dot-completed" title="Completed"></span>`;
+        else if (flavor === "inprogress") dotHtml = `<span class="dot dot-inprogress" title="In Edit"></span>`;
+        else if (flavor === "pending") dotHtml = `<span class="dot dot-pending" title="Pending"></span>`;
+        else dotHtml = `<span class="dot dot-mixed" title="Mixed statuses"></span>`;
+      }
+
+      cell.innerHTML = `
+        <div class="calendar-date">${d}</div>
+        <div class="calendar-meta">
+          <div class="calendar-dots">${dotHtml}</div>
+          <div class="calendar-count">${total ? total : ""}</div>
+        </div>
+      `;
+
+      const breakdown = total
+        ? `Total ${total} • Completed ${c}, In Edit ${ip}, Pending ${p}, Other ${o}`
+        : `No items`;
+      cell.title = `${dayKey}\n${breakdown}`;
+      cell.setAttribute("aria-label", `${dayKey}. ${breakdown}`);
+
+      cell.addEventListener("click", () => {
+        selectedDayKey = (selectedDayKey === dayKey) ? "" : dayKey;
+        renderDashboard();
+      });
+
+      if (!total) cell.style.opacity = "0.75";
+
+      grid.appendChild(cell);
+    }
+  }
+  /* ====================== */
 
   async function init() {
     allData = await fetchSheetData();
