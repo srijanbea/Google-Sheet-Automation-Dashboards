@@ -2750,41 +2750,197 @@ a.tag:hover {
 }
 
 /* =============================================
-   MOBILE RESPONSIVE HEADER
+   COMPREHENSIVE MOBILE RESPONSIVE SYSTEM
    ============================================= */
+
+/* Global Spacing Adjustments for Mobile */
 @media (max-width: 768px) {
+  :root {
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --radius-xl: 16px;
+  }
+
+  .app {
+    padding: var(--space-md);
+  }
+
+  /* 1. HEADER OVERHAUL */
   .header {
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: var(--space-md);
-    padding: var(--space-lg) var(--space-md);
+    padding: var(--space-lg);
   }
 
   .brand {
     flex-direction: column;
     gap: var(--space-sm);
-    margin-bottom: var(--space-xs);
   }
 
-  .title-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .logo {
+    height: 40px;
+    /* Slightly smaller logo */
   }
 
   .title-group h1 {
     font-size: 1.5rem;
+    /* Readable on mobile */
     line-height: 1.2;
   }
 
   .title-group .subtitle {
-    margin-top: var(--space-xs);
+    font-size: 0.85rem;
   }
 
   .controls {
     width: 100%;
     justify-content: center;
     gap: var(--space-sm);
+    margin-top: var(--space-sm);
+  }
+
+  /* 2. FILTER BAR OPTIMIZATION */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    /* Full width children */
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  .search-wrap {
+    max-width: 100%;
+    /* Full width search */
+    order: -1;
+    /* Search first on mobile is often better, or keep standard order */
+  }
+
+  .select-wrap,
+  .select-wrap select {
+    width: 100%;
+  }
+
+  .btn {
+    justify-content: center;
+    /* Center button text */
+  }
+
+  /* 3. MAIN GRID & CARDS */
+  .main-grid {
+    grid-template-columns: 1fr !important;
+    /* Force single column */
+    gap: var(--space-md);
+  }
+
+  .card {
+    padding: var(--space-md);
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .card-header .badge {
+    align-self: flex-start;
+  }
+
+  /* 4. METRICS GRID */
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2x2 grid on mobile */
+    gap: var(--space-sm);
+  }
+
+  .metric-card {
+    padding: var(--space-md);
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  /* 5. TABLE & DATA */
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+
+  .chip-row {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    /* Enable horizontal scroll */
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    /* Negative margin to let table touch edges */
+    padding: 0 16px;
+  }
+
+  /* 6. CHARTS */
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 7. AI CHAT SECTION */
+  .ai-chat-header {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-md);
+  }
+
+  .ai-chat-brand {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ai-chat-container {
+    flex-direction: column;
+    /* Stack context and chat */
+    height: auto;
+    /* Auto height on mobile */
+    min-height: 80vh;
+  }
+
+  .ai-context-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .ai-mode-selector {
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: var(--space-xs);
+  }
+
+  .ai-mode-btn {
+    flex-shrink: 0;
+  }
+}
+
+/* Extra Small Screens (Phones) */
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    /* Stack metrics on tiny screens */
+  }
+
+  .target-row {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .target-input {
+    justify-content: center;
   }
 }
