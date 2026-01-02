@@ -1,521 +1,1339 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
-
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Creator Productivity Dashboard | 10x Enhanced</title>
-  <meta name="description"
-    content="Premium content creator productivity dashboard with Google Sheets integration, advanced analytics, and AI-powered content generation." />
+  <title>Creator Productivity Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --text:#0f172a; --muted:#64748b; --border:rgba(148,163,184,.35);
+      --accent:#2563eb; --accent2:#7c3aed;
+      --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; --info:#60a5fa;
+      --shadow:0 18px 50px rgba(2,6,23,.10);
+      --shadow2:0 10px 30px rgba(2,6,23,.06);
+      --r-xl:22px; --r-lg:18px;
+      --ring:0 0 0 3px rgba(37,99,235,.18);
+      --ring2:0 0 0 2px rgba(124,58,237,.16);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    button,input,select{font:inherit}
+    html,body{height:100%;width:100%}
+    body{
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% 0%, #dbeafe 0%, rgba(219,234,254,0) 60%),
+        radial-gradient(900px 500px at 90% 10%, #ede9fe 0%, rgba(237,233,254,0) 55%),
+        linear-gradient(180deg,#f8fafc 0%,#f3f4f6 100%);
+      color:var(--text);
+      min-height:100vh;
+      padding:16px;
+    }
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+    /* ✅ MAX WIDTH FIX:
+       - Full-bleed layout (100% width)
+       - Only small side padding
+       - NO hard cap like 1400px
+    */
+    .app{
+      width:100%;
+      max-width:none;
+      margin:0;
+    }
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    /* ✅ Also full width */
+    .shell{
+      width:100%;
+      max-width:none;
+      border-radius:28px;
+      padding:2px;
+      background:linear-gradient(135deg,rgba(255,255,255,1),rgba(219,234,254,.9));
+      box-shadow:var(--shadow);
+    }
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css">
+    .inner{
+      width:100%;
+      max-width:none;
+      background:rgba(248,250,252,.92);
+      border-radius:26px;
+      padding:18px 18px 22px;
+      border:1px solid var(--border);
+      backdrop-filter:blur(10px);
+      overflow:hidden; /* prevent accidental horizontal overflow */
+    }
+
+    header{
+      display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;
+      align-items:center;margin-bottom:16px;width:100%;
+    }
+
+    .title-block{display:flex;flex-direction:column;gap:10px;min-width:260px}
+    .brand-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .logo{height:34px;filter:drop-shadow(0 8px 14px rgba(2,6,23,.08))}
+    .title-chip{
+      display:inline-flex;align-items:center;gap:8px;font-size:11px;
+      text-transform:uppercase;letter-spacing:.16em;padding:5px 10px;border-radius:999px;
+      background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.20);
+      color:#1d4ed8;font-weight:650;width:fit-content;
+    }
+    .title-chip-dot{
+      width:7px;height:7px;border-radius:999px;background:var(--good);
+      box-shadow:0 0 0 4px rgba(34,197,94,.22);
+    }
+    h1{
+      font-size:clamp(20px,2.2vw,30px);
+      font-weight:900;letter-spacing:-.04em;display:flex;flex-wrap:wrap;gap:10px;line-height:1.1;
+    }
+    h1 .highlight{
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .subtitle{font-size:13px;color:var(--muted);max-width:80ch;line-height:1.35}
+
+    .control-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end;width:100%}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
+      background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);
+      font-size:12px;color:#3730a3;font-weight:650;white-space:nowrap;
+    }
+    .pill-badge{
+      font-size:12px;padding:3px 8px;border-radius:999px;background:#fff;
+      border:1px solid rgba(99,102,241,.25);color:#3730a3;font-weight:900;
+    }
+
+    .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;width:100%}
+    .select-wrapper{position:relative}
+    .select-wrapper select{
+      appearance:none;padding:8px 32px 8px 12px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.55);
+      background:rgba(255,255,255,.92);color:var(--text);
+      font-size:12px;outline:none;box-shadow:0 1px 2px rgba(2,6,23,.04);max-width:100%;
+    }
+    .select-wrapper select:focus{border-color:rgba(37,99,235,.65);box-shadow:var(--ring)}
+    .select-wrapper::after{
+      content:"▾";position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      font-size:11px;color:var(--muted);pointer-events:none;
+    }
+
+    .search-wrapper{position:relative;flex:1 1 240px;max-width:620px}
+    .search-input{
+      width:100%;padding:8px 30px 8px 12px;border-radius:999px;
+      border:1px solid rgba(148,163,184,.55);
+      background:rgba(255,255,255,.92);
+      font-size:12px;outline:none;box-shadow:0 1px 2px rgba(2,6,23,.04);
+    }
+    .search-input:focus{border-color:rgba(37,99,235,.65);box-shadow:var(--ring)}
+    .search-icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+
+    .btn{
+      border:1px solid rgba(148,163,184,.55);
+      background:rgba(255,255,255,.92);
+      color:var(--text);
+      padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700;
+      cursor:pointer;box-shadow:0 1px 2px rgba(2,6,23,.04);
+      transition:transform .12s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);background:#fff;border-color:rgba(37,99,235,.45)}
+    .btn:focus{outline:none;box-shadow:var(--ring)}
+    .btn-primary{background:linear-gradient(90deg,rgba(37,99,235,.14),rgba(124,58,237,.12));border-color:rgba(37,99,235,.35)}
+    .btn-danger{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25);color:#991b1b}
+
+    /* ✅ FULL WIDTH GRID FIX:
+       - minmax(0,*) prevents overflow
+       - works at huge screens and small screens
+    */
+    main{
+      display:grid;
+      grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);
+      gap:18px;
+      width:100%;
+      max-width:none;
+    }
+    @media (max-width:980px){ main{grid-template-columns:minmax(0,1fr)} }
+
+    .card,.side-card{
+      background:rgba(255,255,255,.92);
+      border-radius:var(--r-xl);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow2);
+      width:100%;
+      min-width:0;
+    }
+    .card{padding:16px}
+    .side-card{padding:14px}
+
+    .card-header{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;
+    }
+    .card-title{
+      font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;
+    }
+    .badge-soft{
+      font-size:11px;padding:5px 9px;border-radius:999px;
+      background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.22);
+      color:var(--muted);white-space:nowrap;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;margin-bottom:12px;width:100%;
+    }
+    @media (max-width:1020px){ .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media (max-width:520px){ .summary-grid{grid-template-columns:1fr} }
+
+    .metric{
+      border-radius:18px;padding:10px 11px;border:1px solid rgba(148,163,184,.25);
+      background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(239,246,255,.92));
+      min-width:0;
+    }
+    .metric-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+    .metric-value{font-size:22px;font-weight:900;letter-spacing:-.05em;margin-bottom:2px}
+    .metric-sub{font-size:11px;color:var(--muted)}
+    .metric-sub span{color:#1d4ed8;font-weight:800}
+    .progress-bar{margin-top:6px;height:7px;border-radius:999px;background:rgba(148,163,184,.25);overflow:hidden}
+    .progress-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,rgba(37,99,235,.8),rgba(34,197,94,.8));transition:width .35s ease}
+
+    .target-row{
+      margin-top:8px;padding:10px;border-radius:var(--r-lg);
+      background:rgba(37,99,235,.08);
+      border:1px solid rgba(37,99,235,.18);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+      font-size:12px;
+    }
+    .target-row-main{display:flex;flex-direction:column;gap:2px}
+    .target-row-main .label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700}
+    .target-row-main .value{font-weight:900;color:#1d4ed8}
+    .target-input-wrap{display:flex;align-items:center;gap:8px;white-space:nowrap}
+    .target-input-wrap label{color:var(--muted);font-size:11px}
+    .target-input-wrap input{
+      width:96px;padding:6px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.55);
+      font-size:12px;outline:none;background:rgba(255,255,255,.92);
+    }
+    .target-input-wrap input:focus{border-color:rgba(37,99,235,.65);box-shadow:var(--ring)}
+
+    .small{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.35}
+
+    .alert{
+      margin-top:10px;border-radius:var(--r-lg);padding:10px 11px;
+      border:1px solid rgba(148,163,184,.25);background:rgba(148,163,184,.10);
+      font-size:12px;line-height:1.35;
+    }
+    .alert strong{font-weight:900}
+    .alert.good{border-color:rgba(34,197,94,.22);background:rgba(34,197,94,.08)}
+    .alert.warn{border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.09)}
+    .alert.bad{border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.08)}
+
+    .chart-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;margin-top:12px;width:100%;
+    }
+    @media (max-width:1120px){ .chart-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media (max-width:980px){ .chart-grid{grid-template-columns:1fr} }
+
+    .chart-card{
+      background:rgba(255,255,255,.92);
+      border-radius:var(--r-lg);
+      padding:10px;
+      border:1px solid rgba(148,163,184,.25);
+      min-width:0;
+      overflow:hidden;
+    }
+    .chart-title{
+      font-size:11px;font-weight:900;color:var(--muted);
+      margin-bottom:6px;text-transform:uppercase;letter-spacing:.10em;
+    }
+    /* ✅ Chart always fits */
+    canvas{display:block;width:100%!important;height:240px!important}
+
+    .summary-text{
+      font-size:12px;color:var(--muted);margin-top:12px;padding:11px 12px;border-radius:var(--r-lg);
+      background:rgba(99,102,241,.07);border:1px dashed rgba(99,102,241,.28);line-height:1.35;
+      overflow-wrap:anywhere;
+    }
+    .summary-text strong{color:#3730a3}
+
+    .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+    .filter-chip{
+      padding:5px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.38);
+      background:rgba(255,255,255,.92);font-size:12px;color:#334155;cursor:pointer;
+      transition:transform .12s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease;
+      white-space:nowrap;
+    }
+    .filter-chip:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.35)}
+    .filter-chip-active{
+      background:linear-gradient(90deg,rgba(37,99,235,.18),rgba(124,58,237,.14));
+      border-color:rgba(37,99,235,.45);box-shadow:var(--ring2);font-weight:800;
+    }
+
+    .table-toolbar{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:10px;width:100%;
+    }
+
+    .table-wrap{
+      margin-top:10px;border-radius:var(--r-xl);
+      border:1px solid rgba(148,163,184,.25);
+      background:rgba(255,255,255,.94);
+      max-height:460px;
+      overflow:auto;
+      width:100%;
+    }
+    table{width:100%;border-collapse:collapse;font-size:12px;min-width:980px}
+    @media (max-width:980px){ table{min-width:860px} }
+    @media (max-width:520px){ table{min-width:760px} }
+    thead{position:sticky;top:0;z-index:2;background:rgba(248,250,252,.96);backdrop-filter:blur(8px)}
+    th,td{padding:9px 10px;text-align:left;vertical-align:top}
+    th{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);border-bottom:1px solid rgba(148,163,184,.25);white-space:nowrap}
+    tbody tr:nth-child(even){background:rgba(148,163,184,.07)}
+    tbody tr:hover{background:rgba(37,99,235,.07)}
+
+    .tag{
+      display:inline-flex;padding:3px 8px;border-radius:999px;font-size:11px;
+      background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.22);
+      color:var(--muted);
+      max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+
+    .status-pill{
+      display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;
+      font-size:11px;border:1px solid transparent;font-weight:800;white-space:nowrap;
+    }
+    .status-pill::before{
+      content:"";width:8px;height:8px;border-radius:999px;background:rgba(148,163,184,.9);
+      box-shadow:0 0 0 3px rgba(148,163,184,.18);
+    }
+    .status-completed{border-color:rgba(34,197,94,.22);background:rgba(34,197,94,.10);color:#166534}
+    .status-completed::before{background:var(--good);box-shadow:0 0 0 3px rgba(34,197,94,.20)}
+    .status-in-progress{border-color:rgba(37,99,235,.22);background:rgba(37,99,235,.10);color:#1d4ed8}
+    .status-in-progress::before{background:var(--info);box-shadow:0 0 0 3px rgba(96,165,250,.20)}
+    .status-pending{border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.12);color:#92400e}
+    .status-pending::before{background:var(--warn);box-shadow:0 0 0 3px rgba(245,158,11,.20)}
+    .status-other{border-color:rgba(148,163,184,.25);background:rgba(148,163,184,.12);color:#475569}
+
+    .list{list-style:none;margin-top:6px}
+    .list-item{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+      padding:9px 8px;border-radius:14px;border:1px solid rgba(148,163,184,0);
+      transition:transform .12s ease,background .15s ease,border-color .15s ease;
+    }
+    .list-item:hover{transform:translateY(-1px);background:rgba(37,99,235,.06);border-color:rgba(37,99,235,.15)}
+    .list-label{font-size:12px;color:var(--muted);font-weight:800}
+    .list-count{font-size:13px;font-weight:950;color:#1d4ed8}
+    .list-chip{
+      font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.25);
+      color:var(--muted);background:rgba(255,255,255,.9);white-space:nowrap;
+    }
+    .error{margin-top:10px;font-size:12px;color:var(--bad);font-weight:750}
+
+    /* Calendar */
+    .calendar-wrap{
+      margin-top:10px;border-radius:var(--r-xl);border:1px solid rgba(148,163,184,.25);
+      background:rgba(255,255,255,.92);padding:10px;width:100%;min-width:0;
+    }
+    .calendar-toprow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+    .calendar-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:8px}
+    .calendar-weekday{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);text-align:center;font-weight:800}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;width:100%}
+    .calendar-cell{
+      border:1px solid rgba(148,163,184,.25);
+      border-radius:14px;min-height:56px;padding:7px;
+      display:flex;flex-direction:column;justify-content:space-between;
+      background:rgba(248,250,252,.95);
+      cursor:pointer;
+      transition:transform .12s ease,box-shadow .15s ease,border-color .15s ease;
+      position:relative;overflow:hidden;min-width:0;
+    }
+    .calendar-cell:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.35);box-shadow:var(--ring2)}
+    .calendar-cell.muted{opacity:.4;cursor:default;background:rgba(148,163,184,.08)}
+    .calendar-cell.today{border-color:rgba(124,58,237,.45);box-shadow:0 0 0 2px rgba(124,58,237,.12)}
+    .calendar-cell.active{border-color:rgba(37,99,235,.65);box-shadow:var(--ring)}
+    .calendar-date{font-size:11px;font-weight:950;color:#334155;display:flex;align-items:center;justify-content:space-between;gap:6px}
+    .calendar-badge{font-size:10px;padding:2px 7px;border-radius:999px;border:1px solid rgba(148,163,184,.22);background:rgba(255,255,255,.85);color:var(--muted);font-weight:900}
+    .calendar-meta{display:flex;align-items:center;justify-content:space-between;gap:6px}
+    .calendar-count{font-size:13px;font-weight:950;color:#1d4ed8}
+    .calendar-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(148,163,184,.25)}
+    .legend-item{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:800}
+    .legend-dot{width:10px;height:10px;border-radius:999px;border:1px solid rgba(2,6,23,.08)}
+    .legend-completed{background:var(--good)}
+    .legend-inprogress{background:var(--info)}
+    .legend-pending{background:var(--warn)}
+    .legend-mixed{background:#a78bfa}
+
+    .tooltip{
+      position:fixed;z-index:9999;pointer-events:none;
+      background:rgba(15,23,42,.94);color:#e2e8f0;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:14px;padding:10px 11px;
+      box-shadow:0 20px 50px rgba(0,0,0,.25);
+      font-size:12px;width:min(320px,calc(100vw - 24px));
+      transform:translate(-9999px,-9999px);
+      backdrop-filter:blur(10px);
+    }
+    .tooltip strong{color:#fff}
+    .tooltip .muted{color:rgba(226,232,240,.75);font-size:11px;margin-top:4px;line-height:1.3}
+    .tooltip .row{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+    .tooltip .k{color:rgba(226,232,240,.75)}
+    .tooltip .v{font-weight:950}
+    .heat{
+      position:absolute;inset:0;opacity:.06;
+      background:linear-gradient(135deg,rgba(37,99,235,.18),rgba(124,58,237,.15));
+      pointer-events:none;transition:opacity .18s ease;
+    }
+  </style>
 </head>
-
 <body>
-  <!-- Animated Background -->
-  <div class="bg-pattern"></div>
-
-  <div class="app">
-    <!-- Header -->
-    <header class="header glass">
-      <div class="brand">
-        <img src="https://cdn.prod.website-files.com/67076f718690cbc6a7e9014c/68b541e62bb82a30cbcbe753_logo-global.svg"
-          alt="Global Select Logo" class="logo" />
-        <div class="title-group">
-          <h1>Creator Productivity Dashboard</h1>
-          <p class="subtitle">Real-time content production analytics with AI-powered insights</p>
-        </div>
-      </div>
-
-      <div class="controls">
-        <div class="live-badge">
-          <span class="live-dot"></span>
-          <span>Live Data</span>
-        </div>
-        <span class="badge" id="creatorCountBadge">–</span>
-        <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
-        <button class="btn" id="refreshBtn" title="Refresh data">🔄 Refresh</button>
-      </div>
-    </header>
-
-    <!-- Filter Bar -->
-    <div class="filter-bar glass">
-      <div class="select-wrap">
-        <select id="monthFilter"></select>
-      </div>
-      <div class="select-wrap">
-        <select id="creatorFilter"></select>
-      </div>
-      <div class="select-wrap">
-        <select id="statusFilter">
-          <option value="">All Status</option>
-          <option value="completed">Completed</option>
-          <option value="in-progress">In Edit</option>
-          <option value="pending">Pending</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input id="searchFilter" class="search-input" type="text" placeholder="Search topic, platform, creator..." />
-      </div>
-      <button class="btn btn-primary" id="resetFiltersBtn">Reset Filters</button>
-    </div>
-
-    <!-- Main Grid -->
-    <div class="main-grid">
-      <!-- Left Column: Main Content -->
-      <div class="main-content">
-        <!-- Metrics Card -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">📊 Key Metrics</span>
-            <span class="badge" id="currentMonthLabel">Month: –</span>
+<div class="app">
+  <div class="shell">
+    <div class="inner">
+      <header>
+        <div class="title-block">
+          <div class="brand-row">
+            <img src="https://cdn.prod.website-files.com/67076f718690cbc6a7e9014c/68b541e62bb82a30cbcbe753_logo-global.svg"
+                 alt="Global Select Logo" class="logo" />
+            <div class="title-chip"><span class="title-chip-dot"></span> Content Production Overview</div>
           </div>
-
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon total">📦</div>
-              <div class="metric-label">Total Items</div>
-              <div class="metric-value gradient" id="totalItems">–</div>
-              <div class="metric-sub"><strong id="totalItemsPerDay">–</strong> per day avg</div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="totalItemsBar"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon completed">✅</div>
-              <div class="metric-label">Completed</div>
-              <div class="metric-value" id="completedItems">–</div>
-              <div class="metric-sub"><strong id="completedPct">–%</strong> of total</div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="completedBar" style="background: var(--gradient-success);"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon progress">🔵</div>
-              <div class="metric-label">In Progress</div>
-              <div class="metric-value" id="inProgressItems">–</div>
-              <div class="metric-sub"><strong id="inProgressPct">–%</strong> of total</div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="inProgressBar" style="background: var(--gradient-secondary);"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon pending">🟠</div>
-              <div class="metric-label">Pending</div>
-              <div class="metric-value" id="pendingItems">–</div>
-              <div class="metric-sub"><strong id="pendingPct">–%</strong> of total</div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="pendingBar"
-                  style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Target Row -->
-          <div class="target-row">
-            <div class="target-info">
-              <span class="label">🎯 Monthly Target</span>
-              <span class="value" id="targetSummary">–</span>
-            </div>
-            <div class="target-input">
-              <label for="targetInput">Set Goal:</label>
-              <input id="targetInput" type="number" min="1" step="1" value="30" />
-            </div>
-          </div>
-
-          <p class="metric-sub" id="consistencyText" style="margin-top: var(--space-md);"></p>
-
-          <div class="alert" id="insightAlert">Select a month and filters to see actionable insights.</div>
-
-          <!-- Charts -->
-          <div class="charts-grid">
-            <div class="chart-card">
-              <div class="chart-title">📊 Items per Creator</div>
-              <canvas id="creatorChart"></canvas>
-            </div>
-            <div class="chart-card">
-              <div class="chart-title">📱 Items per Platform</div>
-              <canvas id="platformChart"></canvas>
-            </div>
-            <div class="chart-card">
-              <div class="chart-title">🎬 Items by Type</div>
-              <canvas id="typeChart"></canvas>
-            </div>
-          </div>
-
-          <div class="summary-text" id="autoSummary">Select a month and filters to see a quick summary of this view.
-          </div>
+          <h1>Creator Productivity <span class="highlight">Dashboard</span></h1>
+          <p class="subtitle">✅ Now truly max-width / full-bleed. No hard cap. Responsive grid. No overflow.</p>
         </div>
 
-        <!-- Content Log Table -->
-        <div class="card table-card">
-          <div class="card-header">
-            <div>
-              <span class="card-title">📋 Content Log</span>
-              <div class="chip-row" id="platformChipRow" style="margin-top: var(--space-sm);"></div>
-            </div>
-            <span class="badge">Showing <span id="rowCount">–</span> items</span>
-          </div>
-
-          <div class="table-toolbar">
-            <div class="chip-row">
-              <button class="btn" type="button" id="quickCompleted">✅ Completed</button>
-              <button class="btn" type="button" id="quickInEdit">🔵 In Edit</button>
-              <button class="btn" type="button" id="quickPending">🟠 Pending</button>
-              <button class="btn btn-danger" type="button" id="clearDayBtn">Clear Day</button>
-            </div>
-            <div class="chip-row">
-              <div class="select-wrap">
-                <select id="sortFilter">
-                  <option value="date-desc">Newest First</option>
-                  <option value="date-asc">Oldest First</option>
-                  <option value="creator-asc">Creator A→Z</option>
-                  <option value="platform-asc">Platform A→Z</option>
-                  <option value="status-asc">Status A→Z</option>
-                </select>
-              </div>
-              <button class="btn btn-primary" type="button" id="exportCsvBtn">📥 Export CSV</button>
-            </div>
-          </div>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Creator</th>
-                  <th>Type</th>
-                  <th>Platform</th>
-                  <th>Location</th>
-                  <th>Topic</th>
-                  <th>Link/Script</th>
-                  <th>Status</th>
-                  <th>Caption</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-          </div>
-
-          <div id="errorMsg" class="error-msg" style="display:none;"></div>
-        </div>
-      </div>
-
-      <!-- Right Column: Sidebar -->
-      <div class="sidebar">
-        <!-- Creator Breakdown -->
-        <div class="side-card">
-          <div class="card-header">
-            <span class="card-title">👥 Creator Breakdown</span>
-            <span class="badge">by completed</span>
-          </div>
-          <ul class="list" id="creatorStats"></ul>
-        </div>
-
-        <!-- Status & Platforms -->
-        <div class="side-card">
-          <div class="card-header">
-            <span class="card-title">📈 Status Distribution</span>
-          </div>
-          <ul class="list" id="statusStats"></ul>
-          <ul class="list" id="platformStats"
-            style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--border-color);">
-          </ul>
-        </div>
-
-        <!-- Calendar Heatmap -->
-        <div class="side-card">
-          <div class="card-header">
-            <span class="card-title">📅 Calendar Heatmap</span>
-            <span class="badge" id="calendarMonthLabel">–</span>
-          </div>
-
-          <div class="calendar-wrap">
-            <div
-              style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-              <span id="calendarHint" style="font-size: 0.75rem; color: var(--text-muted);">Click a day to
-                filter.</span>
-              <button class="btn btn-danger" id="calendarClearBtn" type="button">Clear</button>
-            </div>
-            <div class="calendar-weekdays" id="calendarWeekdays"></div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-
-            <div class="calendar-legend">
-              <span class="legend-item"><span class="legend-dot legend-completed"></span>Completed</span>
-              <span class="legend-item"><span class="legend-dot legend-inprogress"></span>In Edit</span>
-              <span class="legend-item"><span class="legend-dot legend-pending"></span>Pending</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Insights -->
-        <div class="side-card">
-          <div class="card-header">
-            <span class="card-title">💡 Insights</span>
-            <span class="badge" id="insightsTag">–</span>
-          </div>
-          <ul class="list" id="insightsList"></ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Creative Workbench - Premium Chat UI -->
-    <section class="ai-chat-section">
-      <!-- Header -->
-      <div class="ai-chat-header">
-        <div class="ai-chat-brand">
-          <div class="ai-chat-avatar">
-            <span>🤖</span>
-          </div>
-          <div>
-            <h2 class="ai-chat-title">Srijan's Mind AI</h2>
-            <p class="ai-chat-subtitle">Out of Galaxy Creativity ✨</p>
-          </div>
-        </div>
-        <div class="ai-chat-badges">
-          <span class="ai-mode-badge" id="aiModeBadge">📝 Captions</span>
-          <span class="ai-status-badge" id="aiStatusBadge">
-            <span class="ai-status-dot"></span>
-            Ready
-          </span>
-        </div>
-      </div>
-
-      <!-- Mode Selector -->
-      <div class="ai-mode-selector">
-        <button type="button" class="ai-mode-btn active" id="aiTabCaption" data-mode="caption">
-          <span class="ai-mode-icon">📝</span>
-          <span>Captions</span>
-        </button>
-        <button type="button" class="ai-mode-btn" id="aiTabScript" data-mode="script">
-          <span class="ai-mode-icon">🎬</span>
-          <span>Scripts</span>
-        </button>
-        <button type="button" class="ai-mode-btn" id="aiTabHook" data-mode="hook">
-          <span class="ai-mode-icon">💥</span>
-          <span>Hooks</span>
-        </button>
-        <button type="button" class="ai-mode-btn" id="aiTabCalendar" data-mode="calendar">
-          <span class="ai-mode-icon">📅</span>
-          <span>30-Day Plan</span>
-        </button>
-        <button type="button" class="ai-mode-btn" id="aiTabIdeas" data-mode="ideas">
-          <span class="ai-mode-icon">💡</span>
-          <span>Ideas</span>
-        </button>
-        <button type="button" class="ai-mode-btn" id="aiTabFix" data-mode="fix">
-          <span class="ai-mode-icon">🔧</span>
-          <span>Fixer</span>
-        </button>
-        <button type="button" class="ai-mode-btn" id="aiTabSop" data-mode="sop">
-          <span class="ai-mode-icon">🎓</span>
-          <span>SOP Writer</span>
-        </button>
-      </div>
-
-      <!-- Main Chat Area -->
-      <div class="ai-chat-container">
-        <!-- Left Panel: Context Settings (for content modes) -->
-        <div class="ai-context-panel" id="contentContextPanel">
-          <div class="ai-context-header">
-            <span class="ai-context-icon">⚙️</span>
-            <span>Context Settings</span>
-          </div>
-
-          <div class="ai-context-field">
-            <label>🎯 Niche / Offer</label>
-            <input id="aiNiche" type="text" placeholder="IELTS, Study Abroad, Crypto..." />
-          </div>
-
-          <div class="ai-context-field">
-            <label>📱 Platform</label>
-            <input id="aiPlatform" type="text" placeholder="TikTok, Reels, LinkedIn..." />
-          </div>
-
-          <div class="ai-context-field">
-            <label>🎨 Tone</label>
-            <input id="aiTone" type="text" placeholder="Friendly, bold, Gen Z..." />
-          </div>
-
-          <div class="ai-context-field">
-            <label>📏 Length</label>
-            <select id="aiLength">
-              <option value="short">Short & Punchy</option>
-              <option value="medium" selected>Medium</option>
-              <option value="long">Long Form</option>
-            </select>
-          </div>
-
-          <div class="ai-context-field">
-            <label>📚 Brand Memory</label>
-            <textarea id="aiBrandMemory" placeholder="Brand rules, examples, key offers..."></textarea>
-          </div>
-
-          <div class="ai-quick-prompts">
-            <span class="ai-quick-label">Quick Prompts:</span>
-            <button type="button" class="ai-quick-btn" data-prompt="Write 10 viral hooks for my niche">10 Viral
-              Hooks</button>
-            <button type="button" class="ai-quick-btn" data-prompt="Create a 30-day content calendar">30-Day
-              Calendar</button>
-            <button type="button" class="ai-quick-btn" data-prompt="Write 5 engaging captions with CTAs">5
-              Captions</button>
-          </div>
-        </div>
-
-        <!-- Left Panel: SOP Form (for SOP mode) -->
-        <div class="ai-context-panel ai-sop-panel" id="sopContextPanel" style="display: none;">
-          <div class="ai-context-header">
-            <span class="ai-context-icon">🎓</span>
-            <span>Student Details for SOP</span>
-          </div>
-
-          <div class="ai-sop-scroll">
-            <div class="ai-context-field">
-              <label>👤 Full Name</label>
-              <input id="sopName" type="text" placeholder="e.g., Aarav Sharma" />
-            </div>
-
-            <div class="ai-context-field">
-              <label>🎂 Age</label>
-              <input id="sopAge" type="number" placeholder="e.g., 22" min="16" max="50" />
-            </div>
-
-            <div class="ai-context-field">
-              <label>🎓 Current Education</label>
-              <input id="sopEducation" type="text" placeholder="e.g., Bachelor in IT from TU" />
-            </div>
-
-            <div class="ai-context-field">
-              <label>📊 GPA/Percentage</label>
-              <input id="sopGpa" type="text" placeholder="e.g., 3.5 GPA or 78%" />
-            </div>
-
-            <div class="ai-context-field">
-              <label>🌍 Destination Country</label>
-              <select id="sopCountry">
-                <option value="">Select Country</option>
-                <option value="Australia">🇦🇺 Australia</option>
-                <option value="USA">🇺🇸 USA</option>
-                <option value="UK">🇬🇧 UK</option>
-                <option value="Canada">🇨🇦 Canada</option>
-                <option value="New Zealand">🇳🇿 New Zealand</option>
-                <option value="Germany">🇩🇪 Germany</option>
-                <option value="Japan">🇯🇵 Japan</option>
-                <option value="South Korea">🇰🇷 South Korea</option>
-                <option value="Other">Other</option>
+        <div class="control-row">
+          <div class="pill"><span>Creators tracked</span><span class="pill-badge" id="creatorCountBadge">–</span></div>
+          <div class="filters">
+            <div class="select-wrapper"><select id="monthFilter"></select></div>
+            <div class="select-wrapper"><select id="creatorFilter"></select></div>
+            <div class="select-wrapper">
+              <select id="statusFilter">
+                <option value="">All Status</option>
+                <option value="completed">Completed</option>
+                <option value="in-progress">In Edit</option>
+                <option value="pending">Pending</option>
+                <option value="other">Other</option>
               </select>
             </div>
+            <div class="search-wrapper">
+              <input id="searchFilter" class="search-input" type="text" placeholder="Search topic, platform, creator, caption..." />
+              <span class="search-icon">🔍</span>
+            </div>
+            <button class="btn btn-primary" id="resetFiltersBtn" type="button">Reset</button>
+          </div>
+        </div>
+      </header>
 
-            <div class="ai-context-field">
-              <label>🏫 University Name</label>
-              <input id="sopUniversity" type="text" placeholder="e.g., University of Melbourne" />
+      <main>
+        <section>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Key Metrics</div>
+              <div class="badge-soft" id="currentMonthLabel">Month: –</div>
             </div>
 
-            <div class="ai-context-field">
-              <label>📚 Course/Program</label>
-              <input id="sopCourse" type="text" placeholder="e.g., Master of Data Science" />
+            <div class="summary-grid">
+              <div class="metric">
+                <div class="metric-label">Total Items</div>
+                <div class="metric-value" id="totalItems">–</div>
+                <div class="metric-sub"><span id="totalItemsPerDay">–</span> per day avg</div>
+                <div class="progress-bar"><div class="progress-fill" id="totalItemsBar"></div></div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Completed</div>
+                <div class="metric-value" id="completedItems">–</div>
+                <div class="metric-sub"><span id="completedPct">–%</span> of total</div>
+                <div class="progress-bar"><div class="progress-fill" id="completedBar"></div></div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">In Progress</div>
+                <div class="metric-value" id="inProgressItems">–</div>
+                <div class="metric-sub"><span id="inProgressPct">–%</span> of total</div>
+                <div class="progress-bar"><div class="progress-fill" id="inProgressBar"></div></div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Pending / Backlog</div>
+                <div class="metric-value" id="pendingItems">–</div>
+                <div class="metric-sub"><span id="pendingPct">–%</span> of total</div>
+                <div class="progress-bar"><div class="progress-fill" id="pendingBar"></div></div>
+              </div>
             </div>
 
-            <div class="ai-context-field">
-              <label>📝 English Test Score</label>
-              <input id="sopEnglishScore" type="text" placeholder="e.g., IELTS 7.0 or PTE 65" />
+            <div class="target-row">
+              <div class="target-row-main">
+                <span class="label">Monthly target</span>
+                <span class="value" id="targetSummary">–</span>
+              </div>
+              <div class="target-input-wrap">
+                <label for="targetInput">Set target</label>
+                <input id="targetInput" type="number" min="1" step="1" value="60" />
+              </div>
             </div>
 
-            <div class="ai-context-field">
-              <label>💼 Work Experience</label>
-              <textarea id="sopWorkExp"
-                placeholder="e.g., 2 years at Ncell as Software Developer, Internship at F1Soft..."></textarea>
+            <p class="small" id="consistencyText"></p>
+            <div class="alert" id="insightAlert">Select a month and filters to see actionable insights.</div>
+
+            <div class="chart-grid">
+              <div class="chart-card"><div class="chart-title">Items per Creator</div><canvas id="creatorChart"></canvas></div>
+              <div class="chart-card"><div class="chart-title">Items per Platform</div><canvas id="platformChart"></canvas></div>
+              <div class="chart-card"><div class="chart-title">Items by Content Type</div><canvas id="typeChart"></canvas></div>
             </div>
 
-            <div class="ai-context-field">
-              <label>🎯 Career Goals</label>
-              <textarea id="sopGoals"
-                placeholder="Short-term: Get a job in data science. Long-term: Start own AI company in Nepal..."></textarea>
-            </div>
-
-            <div class="ai-context-field">
-              <label>❓ Why This Country/University?</label>
-              <textarea id="sopWhyCountry"
-                placeholder="Quality education, specific faculty, research opportunities, post-study work visa..."></textarea>
-            </div>
-
-            <div class="ai-context-field">
-              <label>👨‍👩‍👧 Family Background (Optional)</label>
-              <input id="sopFamily" type="text" placeholder="e.g., Father is a businessman, mother is a teacher" />
-            </div>
-
-            <div class="ai-context-field">
-              <label>🏆 Extracurriculars (Optional)</label>
-              <textarea id="sopExtras" placeholder="Volunteer work, sports, clubs, achievements..."></textarea>
-            </div>
+            <div class="summary-text" id="autoSummary">Select a month and filters to see a quick summary of this view.</div>
           </div>
 
-          <button type="button" class="ai-sop-generate-btn" id="sopGenerateBtn">
-            <span>✨</span> Generate SOP
-          </button>
-        </div>
+          <div class="card" style="margin-top:14px;">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Content Log</div>
+                <div class="chip-row" id="platformChipRow"></div>
+              </div>
+              <div class="badge-soft">Showing <span id="rowCount">–</span> items</div>
+            </div>
 
-        <!-- Right Panel: Chat Interface -->
-        <div class="ai-chat-main">
-          <!-- Messages Area -->
-          <div class="ai-messages" id="aiMessages">
-            <div class="ai-welcome-message">
-              <div class="ai-welcome-icon">✨</div>
-              <h3>Welcome to Srijan's Mind AI</h3>
-              <p>I can help you create content, write SOPs for study abroad, and more. Choose a mode and describe what
-                you need!</p>
-              <div class="ai-welcome-examples">
-                <span>Try:</span>
-                <button type="button" class="ai-example-btn"
-                  data-prompt="Write 5 scroll-stopping hooks about IELTS exam tips">"Write 5 scroll-stopping
-                  hooks..."</button>
-                <button type="button" class="ai-example-btn"
-                  data-prompt="Write an SOP for: Name: Aarav Sharma, Age: 22, Education: Bachelor in IT from Tribhuvan University (GPA 3.5), Applying to: Master of Data Science at University of Melbourne, Australia, IELTS: 7.0, Work: 1 year internship at F1Soft, Goals: Become a Data Scientist at a tech company in Nepal">"Write
-                  SOP for study abroad..."</button>
+            <div class="table-toolbar">
+              <div class="filters" style="justify-content:flex-start;">
+                <button class="btn" type="button" id="quickCompleted">Only Completed</button>
+                <button class="btn" type="button" id="quickInEdit">Only In Edit</button>
+                <button class="btn" type="button" id="quickPending">Only Pending</button>
+                <button class="btn btn-danger" type="button" id="clearDayBtn" title="Clear calendar day filter">Clear Day</button>
+              </div>
+
+              <div class="filters">
+                <div class="select-wrapper">
+                  <select id="sortFilter">
+                    <option value="date-desc">Sort: Newest</option>
+                    <option value="date-asc">Sort: Oldest</option>
+                    <option value="creator-asc">Sort: Creator (A→Z)</option>
+                    <option value="platform-asc">Sort: Platform (A→Z)</option>
+                    <option value="status-asc">Sort: Status (A→Z)</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary" type="button" id="exportCsvBtn">Export CSV</button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th><th>Creator</th><th>Video Type</th><th>Platform</th><th>Location</th>
+                    <th>Topic</th><th>Dropbox Link / Script</th><th>Status</th><th>Caption</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+
+            <div id="errorMsg" class="error" style="display:none;"></div>
+          </div>
+        </section>
+
+        <section>
+          <div class="side-card">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Creator Breakdown</div>
+              <div class="badge-soft">by completed</div>
+            </div>
+            <ul class="list" id="creatorStats"></ul>
+          </div>
+
+          <div class="side-card" style="margin-top:12px;">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Status & Platforms</div>
+              <div class="badge-soft">keep statuses consistent</div>
+            </div>
+            <ul class="list" id="statusStats"></ul>
+            <ul class="list" id="platformStats" style="margin-top:6px;border-top:1px solid rgba(148,163,184,.25);padding-top:6px;"></ul>
+          </div>
+
+          <div class="side-card" style="margin-top:12px;">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Calendar Heatmap</div>
+              <div class="badge-soft" id="calendarMonthLabel">–</div>
+            </div>
+
+            <div class="calendar-wrap">
+              <div class="calendar-toprow">
+                <div class="small" id="calendarHint" style="margin-top:0;">Click a day to filter. Hover for details.</div>
+                <button class="btn btn-danger" id="calendarClearBtn" type="button">Clear</button>
+              </div>
+              <div class="calendar-weekdays" id="calendarWeekdays"></div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+
+              <div class="calendar-legend">
+                <span class="legend-item"><span class="legend-dot legend-completed"></span>Completed</span>
+                <span class="legend-item"><span class="legend-dot legend-inprogress"></span>In Edit</span>
+                <span class="legend-item"><span class="legend-dot legend-pending"></span>Pending</span>
+                <span class="legend-item"><span class="legend-dot legend-mixed"></span>Mixed</span>
               </div>
             </div>
           </div>
 
-          <!-- Input Area -->
-          <div class="ai-input-area">
-            <div class="ai-input-wrapper">
-              <textarea id="aiPrompt" placeholder="Describe what you want to create..." rows="1"></textarea>
-              <div class="ai-input-actions">
-                <button type="button" class="ai-copy-btn" id="aiCopyBtn" title="Copy output">
-                  <span>📋</span>
-                </button>
-                <button type="button" class="ai-send-btn" id="aiGenerateBtn">
-                  <span class="ai-send-icon">🚀</span>
-                  <span>Generate</span>
-                </button>
-              </div>
+          <div class="side-card" style="margin-top:12px;">
+            <div class="card-header" style="margin-bottom:4px;">
+              <div class="card-title">Insights</div>
+              <div class="badge-soft" id="insightsTag">–</div>
             </div>
-            <div class="ai-input-hints">
-              <span id="aiMeta">Out of Galaxy Creativity • Powered by Srijan Dona Mind AI</span>
-            </div>
+            <ul class="list" id="insightsList"></ul>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      </main>
+    </div>
   </div>
+</div>
 
-  <!-- Tooltip -->
-  <div class="tooltip" id="tooltip"></div>
+<div class="tooltip" id="tooltip"></div>
 
-  <!-- App JavaScript -->
-  <script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const SHEET_ID = "18wIazB6wExNteYnsUrkTwzQuO40QIYdvKamdlGNalec";
+  const SHEET_NAME = "ContentTracker";
+  const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
+  const STORAGE_KEY = "creator_dashboard_state_v4";
+
+  let allData=[], months=[], creators=[];
+  let searchTerm="", selectedPlatform="", monthlyTarget=60, selectedDayKey="", sortMode="date-desc";
+  let creatorChartInstance=null, platformChartInstance=null, typeChartInstance=null;
+
+  const COMPLETED_STATUSES=["completed","done","published","posted"];
+  const INPROGRESS_STATUSES=["in progress","draft","editing","in edit","edit"];
+  const PENDING_STATUSES=["pending","todo","backlog","not started","assign"];
+
+  const $=(id)=>document.getElementById(id);
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const pad2=(n)=>String(n).padStart(2,"0");
+  const normalizeStatus=(s)=>(s||"").toLowerCase().trim();
+
+  function parseGoogleDate(value){
+    if(!value) return null;
+    if(typeof value==="string" && value.startsWith("Date(")){
+      const parts=value.slice(5,-1).split(",").map(Number);
+      const [y,m,d,hh=0,mm=0,ss=0]=parts;
+      return new Date(y,m,d,hh,mm,ss);
+    }
+    return new Date(value);
+  }
+  const getMonthKey=(d)=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+  const dateToDayKey=(d)=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  const formatMonthLabelFromKey=(key)=>{const [y,m]=key.split("-").map(Number);return new Date(y,m-1,1).toLocaleString(undefined,{month:"short",year:"numeric"});};
+  const formatDateDisplay=(d)=>d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"2-digit"});
+
+  function statusMatchesFilter(rowStatus,filterValue){
+    const s=normalizeStatus(rowStatus);
+    if(!filterValue) return true;
+    if(filterValue==="completed") return COMPLETED_STATUSES.includes(s);
+    if(filterValue==="in-progress") return INPROGRESS_STATUSES.includes(s);
+    if(filterValue==="pending") return PENDING_STATUSES.includes(s);
+    if(filterValue==="other") return !COMPLETED_STATUSES.includes(s)&&!INPROGRESS_STATUSES.includes(s)&&!PENDING_STATUSES.includes(s);
+    return true;
+  }
+  function getStatusClass(status){
+    const s=normalizeStatus(status);
+    if(COMPLETED_STATUSES.includes(s)) return "status-completed";
+    if(INPROGRESS_STATUSES.includes(s)) return "status-in-progress";
+    if(PENDING_STATUSES.includes(s)) return "status-pending";
+    return "status-other";
+  }
+
+  function showError(msg){ const el=$("errorMsg"); el.textContent=msg; el.style.display="block"; }
+  function clearError(){ const el=$("errorMsg"); el.textContent=""; el.style.display="none"; }
+
+  function saveState(){
+    try{
+      const state={
+        month:$("monthFilter")?.value||"",
+        creator:$("creatorFilter")?.value||"",
+        status:$("statusFilter")?.value||"",
+        search:$("searchFilter")?.value||"",
+        platform:selectedPlatform||"",
+        target:monthlyTarget||60,
+        day:selectedDayKey||"",
+        sort:sortMode||"date-desc"
+      };
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    }catch(_){}
+  }
+  function loadState(){ try{ const raw=localStorage.getItem(STORAGE_KEY); return raw?JSON.parse(raw):null; }catch(_){ return null; } }
+
+  async function fetchSheetData(){
+    try{
+      const res=await fetch(SHEET_URL);
+      const text=await res.text();
+      const jsonStr=text.substring(text.indexOf("{"),text.lastIndexOf("}")+1);
+      const parsed=JSON.parse(jsonStr);
+      const rows=parsed.table?.rows||[];
+      const data=[];
+      for(const row of rows){
+        const c=row.c||[];
+        const rawDate=c[0]?.v; if(!rawDate) continue;
+        const date=parseGoogleDate(rawDate); if(!date||isNaN(date)) continue;
+        data.push({
+          date,
+          videoType:(c[1]?.v??"").toString(),
+          location:(c[2]?.v??"").toString(),
+          topic:(c[3]?.v??"").toString(),
+          DropboxLink_Script:(c[4]?.v??"").toString(),
+          platform:(c[5]?.v??"").toString(),
+          status:(c[6]?.v??"").toString(),
+          creator:(c[7]?.v??"Unassigned").toString(),
+          caption:(c[8]?.v??"").toString()
+        });
+      }
+      return data;
+    }catch(err){
+      console.error(err);
+      showError("Could not load data from Google Sheets. Check Sheet ID, Sheet Name, and public access.");
+      return [];
+    }
+  }
+
+  function buildFilters(){
+    const monthFilter=$("monthFilter");
+    const creatorFilter=$("creatorFilter");
+    const creatorCountBadge=$("creatorCountBadge");
+    const statusFilter=$("statusFilter");
+    const searchFilter=$("searchFilter");
+    const targetInput=$("targetInput");
+    const sortFilter=$("sortFilter");
+
+    const monthSet=new Set(), creatorSet=new Set(), platformSet=new Set();
+    allData.forEach(r=>{
+      monthSet.add(getMonthKey(r.date));
+      creatorSet.add(r.creator||"Unassigned");
+      platformSet.add(r.platform||"Unassigned");
+    });
+
+    months=Array.from(monthSet).sort();
+    creators=Array.from(creatorSet).sort();
+    const platforms=Array.from(platformSet).sort();
+
+    monthFilter.innerHTML="";
+    months.forEach((key,idx)=>{
+      const opt=document.createElement("option");
+      opt.value=key; opt.textContent=formatMonthLabelFromKey(key);
+      if(idx===months.length-1) opt.selected=true;
+      monthFilter.appendChild(opt);
+    });
+
+    creatorFilter.innerHTML="";
+    const allOpt=document.createElement("option"); allOpt.value=""; allOpt.textContent="All Creators";
+    creatorFilter.appendChild(allOpt);
+    creators.forEach(name=>{
+      const opt=document.createElement("option"); opt.value=name; opt.textContent=name;
+      creatorFilter.appendChild(opt);
+    });
+
+    creatorCountBadge.textContent=String(creators.length||0);
+
+    monthFilter.addEventListener("change",()=>{selectedDayKey="";saveState();renderDashboard();});
+    creatorFilter.addEventListener("change",()=>{saveState();renderDashboard();});
+    statusFilter.addEventListener("change",()=>{saveState();renderDashboard();});
+    searchFilter.addEventListener("input",(e)=>{searchTerm=(e.target.value||"").toLowerCase().trim();saveState();renderDashboard();});
+
+    targetInput.addEventListener("input",(e)=>{
+      const val=Number(e.target.value);
+      if(!isNaN(val)&&val>0){monthlyTarget=val;saveState();renderDashboard();}
+    });
+
+    sortFilter.addEventListener("change",(e)=>{sortMode=e.target.value||"date-desc";saveState();renderDashboard();});
+
+    $("quickCompleted").addEventListener("click",()=>{statusFilter.value="completed";saveState();renderDashboard();});
+    $("quickInEdit").addEventListener("click",()=>{statusFilter.value="in-progress";saveState();renderDashboard();});
+    $("quickPending").addEventListener("click",()=>{statusFilter.value="pending";saveState();renderDashboard();});
+
+    $("calendarClearBtn").addEventListener("click",()=>{selectedDayKey="";saveState();renderDashboard();});
+    $("clearDayBtn").addEventListener("click",()=>{selectedDayKey="";saveState();renderDashboard();});
+
+    $("resetFiltersBtn").addEventListener("click",()=>{
+      searchFilter.value=""; searchTerm="";
+      statusFilter.value=""; creatorFilter.value="";
+      selectedPlatform=""; selectedDayKey="";
+      sortMode="date-desc"; sortFilter.value="date-desc";
+      targetInput.value="60"; monthlyTarget=60;
+      saveState(); buildPlatformChips(platforms); renderDashboard();
+    });
+
+    $("exportCsvBtn").addEventListener("click",exportCurrentViewCsv);
+
+    buildPlatformChips(platforms);
+    applyLoadedState();
+  }
+
+  function buildPlatformChips(platforms){
+    const container=$("platformChipRow"); container.innerHTML="";
+    const addChip=(label,value)=>{
+      const chip=document.createElement("button");
+      chip.type="button";
+      chip.className="filter-chip"+(selectedPlatform===value?" filter-chip-active":"");
+      chip.textContent=label;
+      chip.addEventListener("click",()=>{selectedPlatform=value;saveState();buildPlatformChips(platforms);renderDashboard();});
+      container.appendChild(chip);
+    };
+    addChip("All platforms","");
+    platforms.forEach(p=>addChip(p,p));
+  }
+
+  function applyLoadedState(){
+    const state=loadState(); if(!state) return;
+    const monthFilter=$("monthFilter"), creatorFilter=$("creatorFilter"), statusFilter=$("statusFilter");
+    const searchFilter=$("searchFilter"), targetInput=$("targetInput"), sortFilter=$("sortFilter");
+
+    if(state.month && Array.from(monthFilter.options).some(o=>o.value===state.month)) monthFilter.value=state.month;
+    if(state.creator && Array.from(creatorFilter.options).some(o=>o.value===state.creator)) creatorFilter.value=state.creator;
+    if(state.status) statusFilter.value=state.status;
+
+    if(typeof state.search==="string"){searchFilter.value=state.search;searchTerm=state.search.toLowerCase().trim();}
+    if(typeof state.target==="number"&&state.target>0){monthlyTarget=state.target;targetInput.value=String(state.target);}
+    if(typeof state.platform==="string") selectedPlatform=state.platform;
+    if(typeof state.day==="string") selectedDayKey=state.day;
+    if(typeof state.sort==="string"){sortMode=state.sort;sortFilter.value=state.sort;}
+  }
+
+  function renderDashboard(){
+    clearError();
+    if(!allData.length||!months.length){showError("No rows found.");return;}
+
+    const monthKey=$("monthFilter").value||months[months.length-1];
+    const creator=$("creatorFilter").value;
+    const statusFilterVal=$("statusFilter").value;
+
+    if(selectedDayKey && !selectedDayKey.startsWith(monthKey+"-")) selectedDayKey="";
+
+    const monthLabel=formatMonthLabelFromKey(monthKey);
+    $("currentMonthLabel").textContent=`Month: ${monthLabel}`;
+
+    const filtered=allData.filter(row=>{
+      const sameMonth=getMonthKey(row.date)===monthKey;
+      const sameCreator=!creator||row.creator===creator;
+      const platformLabel=row.platform||"Unassigned";
+      const matchesPlatform=!selectedPlatform||platformLabel===selectedPlatform;
+
+      const textToSearch=[row.topic,row.platform,row.location,row.videoType,row.creator,row.status,row.caption].join(" ").toLowerCase();
+      const matchesSearch=!searchTerm||textToSearch.includes(searchTerm);
+      const matchesStatus=statusMatchesFilter(row.status,statusFilterVal);
+
+      const matchesDay=!selectedDayKey || dateToDayKey(row.date)===selectedDayKey;
+      return sameMonth&&sameCreator&&matchesPlatform&&matchesSearch&&matchesStatus&&matchesDay;
+    });
+
+    const monthOnly=allData.filter(r=>getMonthKey(r.date)===monthKey);
+
+    updateSummaryCards(filtered,monthKey);
+    updateCreatorStats(filtered);
+    updateStatusPlatformStats(filtered);
+    updateCalendarView(filtered,monthOnly,monthKey);
+    updateInsights(filtered,monthKey);
+    updateTable(filtered);
+    updateCharts(filtered);
+    updateSummaryText(filtered,{monthLabel,creator,statusFilterVal,platformLabel:selectedPlatform});
+
+    saveState();
+  }
+
+  function updateSummaryCards(data,monthKey){
+    const total=data.length;
+    let completed=0,inProgress=0,pending=0;
+
+    data.forEach(r=>{
+      const s=normalizeStatus(r.status);
+      if(COMPLETED_STATUSES.includes(s)) completed++;
+      else if(INPROGRESS_STATUSES.includes(s)) inProgress++;
+      else if(PENDING_STATUSES.includes(s)) pending++;
+    });
+
+    $("totalItems").textContent=String(total);
+    $("completedItems").textContent=String(completed);
+    $("inProgressItems").textContent=String(inProgress);
+    $("pendingItems").textContent=String(pending);
+
+    const base=total||1;
+    const completedPct=Math.round((completed/base)*100);
+    const inProgressPct=Math.round((inProgress/base)*100);
+    const pendingPct=Math.round((pending/base)*100);
+
+    $("completedPct").textContent=`${completedPct}%`;
+    $("inProgressPct").textContent=`${inProgressPct}%`;
+    $("pendingPct").textContent=`${pendingPct}%`;
+
+    const [y,m]=monthKey.split("-").map(Number);
+    const daysInMonth=new Date(y,m,0).getDate();
+    $("totalItemsPerDay").textContent=(total?(total/daysInMonth):0).toFixed(1);
+
+    updateTargetSummary(total,daysInMonth);
+
+    $("totalItemsBar").style.width=(Math.min(1,total/(monthlyTarget||1))*100)+"%";
+    $("completedBar").style.width=completedPct+"%";
+    $("inProgressBar").style.width=inProgressPct+"%";
+    $("pendingBar").style.width=pendingPct+"%";
+
+    updateConsistencyText(data,daysInMonth);
+    updateAlert(total,completed,inProgress,pending);
+  }
+
+  function updateTargetSummary(totalItems,daysInMonth){
+    const remaining=Math.max(0,monthlyTarget-totalItems);
+    const pct=monthlyTarget?Math.round((totalItems/monthlyTarget)*100):0;
+
+    const monthFilterVal=$("monthFilter").value||"";
+    const [y,m]=monthFilterVal.split("-").map(Number);
+    const today=new Date();
+    let remainingDays=daysInMonth;
+    if(today.getFullYear()===y && (today.getMonth()+1)===m){
+      remainingDays=Math.max(0,daysInMonth-today.getDate()+1);
+    }
+    const neededPerDay=remainingDays>0?(remaining/remainingDays):remaining;
+    $("targetSummary").textContent=`${totalItems}/${monthlyTarget} • ${pct}% • ${remaining} left (${neededPerDay.toFixed(1)}/day)`;
+  }
+
+  function updateConsistencyText(data,daysInMonth){
+    const el=$("consistencyText");
+    if(!data.length){el.textContent="No activity recorded for this view.";return;}
+    const daySet=new Set(data.map(r=>r.date.getDate()));
+    const postingDays=daySet.size;
+    const daysSorted=Array.from(daySet).sort((a,b)=>a-b);
+    let longest=0,cur=0,prev=null;
+    daysSorted.forEach(d=>{
+      cur=(prev===null||d===prev+1)?cur+1:1;
+      longest=Math.max(longest,cur);
+      prev=d;
+    });
+    el.textContent=`Consistency: ${postingDays}/${daysInMonth} days • longest streak ${longest} day${longest!==1?"s":""}.`;
+  }
+
+  function updateAlert(total,completed,inProgress,pending){
+    const el=$("insightAlert");
+    if(!total){el.className="alert";el.innerHTML="No items match this view. Try Reset.";return;}
+    const completedRate=completed/total;
+    const pendingRate=pending/total;
+    if(completedRate>=0.6 && pendingRate<=0.25){
+      el.className="alert good"; el.innerHTML=`<strong>Healthy pipeline.</strong> Completion ${(completedRate*100).toFixed(0)}% • Pending ${(pendingRate*100).toFixed(0)}%.`;
+    }else if(pendingRate>=0.4){
+      el.className="alert bad"; el.innerHTML=`<strong>Backlog risk.</strong> Pending ${(pendingRate*100).toFixed(0)}% — push edits.`;
+    }else{
+      el.className="alert warn"; el.innerHTML=`<strong>Mixed state.</strong> Completed ${(completedRate*100).toFixed(0)}% • In edit ${(inProgress/total*100).toFixed(0)}%.`;
+    }
+  }
+
+  function updateCreatorStats(data){
+    const container=$("creatorStats"); container.innerHTML="";
+    const counts={};
+    data.forEach(r=>{
+      const name=r.creator||"Unassigned";
+      counts[name]=counts[name]||{completed:0,total:0};
+      counts[name].total++;
+      if(COMPLETED_STATUSES.includes(normalizeStatus(r.status))) counts[name].completed++;
+    });
+    const entries=Object.entries(counts).sort((a,b)=>b[1].completed-a[1].completed);
+    if(!entries.length){container.innerHTML=`<li class="list-item"><span class="list-label">No items in this view.</span></li>`;return;}
+    const totalCompleted=entries.reduce((s,[,v])=>s+v.completed,0)||1;
+    entries.forEach(([name,v])=>{
+      const pct=Math.round((v.completed/totalCompleted)*100);
+      const li=document.createElement("li");
+      li.className="list-item";
+      li.innerHTML=`
+        <div>
+          <div class="list-label">${escapeHtml(name)}</div>
+          <div class="small" style="margin-top:4px;">${v.completed} completed • ${v.total} total • ${pct}% share</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="list-count">${v.completed}</span><span class="list-chip">done</span>
+        </div>`;
+      container.appendChild(li);
+    });
+  }
+
+  function updateStatusPlatformStats(data){
+    const statusContainer=$("statusStats");
+    const platformContainer=$("platformStats");
+    statusContainer.innerHTML=""; platformContainer.innerHTML="";
+    const statusCounts={}, platformCounts={};
+    data.forEach(r=>{
+      const s=r.status||"Unknown"; const p=r.platform||"Unassigned";
+      statusCounts[s]=(statusCounts[s]||0)+1;
+      platformCounts[p]=(platformCounts[p]||0)+1;
+    });
+    const total=data.length||1;
+    Object.entries(statusCounts).sort((a,b)=>b[1]-a[1]).forEach(([s,c])=>{
+      const li=document.createElement("li");
+      li.className="list-item";
+      li.innerHTML=`<div><div class="list-label">${escapeHtml(s)}</div><div class="small" style="margin-top:4px;">${Math.round(c/total*100)}% of items</div></div><span class="list-count">${c}</span>`;
+      statusContainer.appendChild(li);
+    });
+    Object.entries(platformCounts).sort((a,b)=>b[1]-a[1]).forEach(([p,c])=>{
+      const li=document.createElement("li");
+      li.className="list-item";
+      li.innerHTML=`<div><div class="list-label">${escapeHtml(p)}</div><div class="small" style="margin-top:4px;">${Math.round(c/total*100)}% of items</div></div><span class="list-count">${c}</span>`;
+      platformContainer.appendChild(li);
+    });
+  }
+
+  function buildWeekdayHeader(){
+    const container=$("calendarWeekdays");
+    container.innerHTML="";
+    ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(l=>{
+      const div=document.createElement("div");
+      div.className="calendar-weekday";
+      div.textContent=l;
+      container.appendChild(div);
+    });
+  }
+  const startDayOffsetMonFirst=(d)=>(d.getDay()+6)%7;
+
+  function summarizeDayStatuses(items){
+    let c=0,ip=0,p=0,o=0;
+    items.forEach(r=>{
+      const s=normalizeStatus(r.status);
+      if(COMPLETED_STATUSES.includes(s)) c++;
+      else if(INPROGRESS_STATUSES.includes(s)) ip++;
+      else if(PENDING_STATUSES.includes(s)) p++;
+      else o++;
+    });
+    return {c,ip,p,o};
+  }
+
+  function updateCalendarView(filteredData,monthOnlyData,monthKey){
+    const grid=$("calendarGrid");
+    $("calendarMonthLabel").textContent=formatMonthLabelFromKey(monthKey);
+    buildWeekdayHeader();
+    grid.innerHTML="";
+
+    const [y,m]=monthKey.split("-").map(Number);
+    const first=new Date(y,m-1,1);
+    const daysInMonth=new Date(y,m,0).getDate();
+    const offset=startDayOffsetMonFirst(first);
+
+    const byDay={};
+    filteredData.forEach(r=>((byDay[dateToDayKey(r.date)] ||= []).push(r)));
+
+    const monthCounts={};
+    monthOnlyData.forEach(r=>{
+      const k=dateToDayKey(r.date);
+      monthCounts[k]=(monthCounts[k]||0)+1;
+    });
+    const maxCount=Math.max(1,...Object.values(monthCounts));
+
+    const todayKey=dateToDayKey(new Date());
+    $("calendarHint").innerHTML=selectedDayKey?`Filtering to <strong>${selectedDayKey}</strong>. Click again to clear.`:`Click a day to filter. Hover for details.`;
+
+    for(let i=0;i<offset;i++){
+      const blank=document.createElement("div");
+      blank.className="calendar-cell muted";
+      blank.innerHTML=`<div class="calendar-date">&nbsp;</div><div class="calendar-meta"></div>`;
+      grid.appendChild(blank);
+    }
+
+    for(let d=1;d<=daysInMonth;d++){
+      const dt=new Date(y,m-1,d);
+      const dayKey=dateToDayKey(dt);
+      const items=byDay[dayKey]||[];
+      const total=items.length;
+      const baseCount=monthCounts[dayKey]||0;
+      const intensity=clamp(baseCount/maxCount,0,1);
+      const {c,ip,p,o}=summarizeDayStatuses(items);
+
+      const btn=document.createElement("button");
+      btn.type="button";
+      btn.className="calendar-cell";
+      if(dayKey===todayKey) btn.classList.add("today");
+      if(selectedDayKey===dayKey) btn.classList.add("active");
+
+      const heat=document.createElement("div");
+      heat.className="heat";
+      heat.style.opacity=(0.06+intensity*0.40).toFixed(2);
+      btn.appendChild(heat);
+
+      const inner=document.createElement("div");
+      inner.style.position="relative";
+      inner.style.zIndex="1";
+      inner.innerHTML=`
+        <div class="calendar-date"><span>${d}</span><span class="calendar-badge">${baseCount}</span></div>
+        <div class="calendar-meta"><span class="calendar-count">${total?total:""}</span></div>
+      `;
+      btn.appendChild(inner);
+
+      btn.addEventListener("click",()=>{
+        selectedDayKey=(selectedDayKey===dayKey)?"":dayKey;
+        saveState(); renderDashboard();
+      });
+      btn.addEventListener("mousemove",(e)=>showTooltip(e.clientX,e.clientY,tooltipHtml(dayKey,baseCount,total,c,ip,p,o)));
+      btn.addEventListener("mouseleave",hideTooltip);
+
+      grid.appendChild(btn);
+    }
+  }
+
+  function tooltipHtml(dayKey,monthTotal,total,c,ip,p,o){
+    return `
+      <div><strong>${dayKey}</strong></div>
+      <div class="muted">Month total on this day: <strong>${monthTotal}</strong></div>
+      <div class="row"><span class="k">In this view</span><span class="v">${total}</span></div>
+      <div class="row"><span class="k">Completed</span><span class="v">${c}</span></div>
+      <div class="row"><span class="k">In edit</span><span class="v">${ip}</span></div>
+      <div class="row"><span class="k">Pending</span><span class="v">${p}</span></div>
+      <div class="row"><span class="k">Other</span><span class="v">${o}</span></div>
+      <div class="muted" style="margin-top:8px;">Click to filter by this date.</div>
+    `;
+  }
+  function showTooltip(x,y,html){
+    const tip=$("tooltip");
+    tip.innerHTML=html;
+    const margin=12;
+    const w=tip.offsetWidth, h=tip.offsetHeight;
+    let left=x+margin, top=y+margin;
+    if(left+w>window.innerWidth-margin) left=x-w-margin;
+    if(top+h>window.innerHeight-margin) top=y-h-margin;
+    tip.style.transform=`translate(${left}px, ${top}px)`;
+  }
+  function hideTooltip(){ $("tooltip").style.transform="translate(-9999px,-9999px)"; }
+
+  function updateInsights(data,monthKey){
+    const list=$("insightsList");
+    const tag=$("insightsTag");
+    list.innerHTML="";
+    tag.textContent=selectedDayKey?`Day: ${selectedDayKey}`:formatMonthLabelFromKey(monthKey);
+
+    if(!data.length){list.innerHTML=`<li class="list-item"><div class="list-label">No insights — empty view.</div><span class="list-chip">Try reset</span></li>`;return;}
+
+    let completed=0,inEdit=0,pending=0,other=0;
+    const creatorCompleted={}, platformCounts={}, dayCounts={};
+
+    data.forEach(r=>{
+      const st=normalizeStatus(r.status);
+      if(COMPLETED_STATUSES.includes(st)) completed++;
+      else if(INPROGRESS_STATUSES.includes(st)) inEdit++;
+      else if(PENDING_STATUSES.includes(st)) pending++;
+      else other++;
+
+      const cr=r.creator||"Unassigned";
+      creatorCompleted[cr]=creatorCompleted[cr]||0;
+      if(COMPLETED_STATUSES.includes(st)) creatorCompleted[cr]++;
+
+      const pl=r.platform||"Unassigned";
+      platformCounts[pl]=(platformCounts[pl]||0)+1;
+
+      const dk=dateToDayKey(r.date);
+      dayCounts[dk]=(dayCounts[dk]||0)+1;
+    });
+
+    const total=data.length;
+    const completionRate=total?completed/total:0;
+    const pendingRate=total?pending/total:0;
+    const activeDays=Object.keys(dayCounts).length||1;
+    const velocity=completed/activeDays;
+
+    const topCreator=Object.entries(creatorCompleted).sort((a,b)=>b[1]-a[1])[0]||["–",0];
+    const topPlatform=Object.entries(platformCounts).sort((a,b)=>b[1]-a[1])[0]||["–",0];
+    const mostActiveDay=Object.entries(dayCounts).sort((a,b)=>b[1]-a[1])[0]||["–",0];
+
+    let riskText="Low", emoji="✅";
+    if(pendingRate>=0.45){riskText="High";emoji="⚠️";}
+    else if(pendingRate>=0.30){riskText="Medium";emoji="🟠";}
+
+    const items=[
+      ["Top creator (completed)", `${escapeHtml(topCreator[0])} • ${topCreator[1]}`],
+      ["Most used platform", `${escapeHtml(topPlatform[0])} • ${topPlatform[1]} items`],
+      ["Most active day", `${mostActiveDay[0]} • ${mostActiveDay[1]} items`],
+      ["Completion velocity", `${velocity.toFixed(2)} completed / active day`],
+      ["Completion rate", `${(completionRate*100).toFixed(0)}%`],
+      ["Backlog risk", `${emoji} ${riskText} • ${(pendingRate*100).toFixed(0)}% pending`],
+    ];
+
+    items.forEach(([k,v])=>{
+      const li=document.createElement("li");
+      li.className="list-item";
+      li.innerHTML=`<div><div class="list-label">${k}</div><div class="small" style="margin-top:4px;color:#475569;">${v}</div></div><span class="list-chip">Insight</span>`;
+      list.appendChild(li);
+    });
+  }
+
+  function sortRows(data){
+    const arr=[...data];
+    const safe=(x)=>(x||"").toString().toLowerCase();
+    arr.sort((a,b)=>{
+      if(sortMode==="date-desc") return b.date-a.date;
+      if(sortMode==="date-asc") return a.date-b.date;
+      if(sortMode==="creator-asc") return safe(a.creator).localeCompare(safe(b.creator));
+      if(sortMode==="platform-asc") return safe(a.platform).localeCompare(safe(b.platform));
+      if(sortMode==="status-asc") return safe(a.status).localeCompare(safe(b.status));
+      return b.date-a.date;
+    });
+    return arr;
+  }
+
+  function updateTable(data){
+    const tbody=$("tableBody");
+    $("rowCount").textContent=String(data.length);
+    tbody.innerHTML="";
+    if(!data.length){
+      tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:16px;">No items match this view. Try Reset or clear Day filter.</td></tr>`;
+      return;
+    }
+
+    sortRows(data).forEach(row=>{
+      const linkText=(row.DropboxLink_Script||"").toString().trim();
+      const isScriptReady=linkText.toLowerCase()==="yes";
+      const linkCell=isScriptReady
+        ? `<span class="tag">Script Ready</span>`
+        : (isProbablyUrl(linkText)
+          ? `<a class="tag" href="${escapeAttr(linkText)}" target="_blank" rel="noopener noreferrer">${escapeHtml(shorten(linkText,38))}</a>`
+          : `<span class="tag" title="${escapeAttr(linkText||"-")}">${escapeHtml(shorten(linkText||"-",38))}</span>`);
+
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>${formatDateDisplay(row.date)}</td>
+        <td>${escapeHtml(row.creator||"-")}</td>
+        <td>${escapeHtml(row.videoType||"-")}</td>
+        <td>${escapeHtml(row.platform||"-")}</td>
+        <td>${escapeHtml(row.location||"-")}</td>
+        <td>${escapeHtml(row.topic||"-")}</td>
+        <td>${linkCell}</td>
+        <td><span class="status-pill ${getStatusClass(row.status)}">${escapeHtml(row.status||"-")}</span></td>
+        <td>${escapeHtml(row.caption||"-")}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportCurrentViewCsv(){
+    const monthKey=$("monthFilter").value||months[months.length-1];
+    const creator=$("creatorFilter").value;
+    const statusFilterVal=$("statusFilter").value;
+
+    const current=allData.filter(row=>{
+      const sameMonth=getMonthKey(row.date)===monthKey;
+      const sameCreator=!creator||row.creator===creator;
+      const matchesPlatform=!selectedPlatform || (row.platform||"Unassigned")===selectedPlatform;
+
+      const textToSearch=[row.topic,row.platform,row.location,row.videoType,row.creator,row.status,row.caption].join(" ").toLowerCase();
+      const matchesSearch=!searchTerm||textToSearch.includes(searchTerm);
+      const matchesStatus=statusMatchesFilter(row.status,statusFilterVal);
+      const matchesDay=!selectedDayKey || dateToDayKey(row.date)===selectedDayKey;
+
+      return sameMonth&&sameCreator&&matchesPlatform&&matchesSearch&&matchesStatus&&matchesDay;
+    });
+
+    const rows=sortRows(current).map(r=>[
+      dateToDayKey(r.date),
+      r.creator||"",r.videoType||"",r.platform||"",r.location||"",
+      r.topic||"",r.DropboxLink_Script||"",r.status||"",r.caption||""
+    ]);
+
+    const csv=toCsv([["Date","Creator","Video Type","Platform","Location","Topic","Dropbox Link / Script","Status","Caption"], ...rows]);
+    const filename=`content_log_${monthKey}${selectedDayKey?"_"+selectedDayKey:""}.csv`;
+
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function toCsv(rows){
+    return rows.map(r=>r.map(cell=>{
+      const s=(cell??"").toString().replace(/"/g,'""');
+      return /[",\n]/.test(s) ? `"${s}"` : s;
+    }).join(",")).join("\n");
+  }
+
+  function updateCharts(data){
+    const creatorCounts={}, platformCounts={}, typeCounts={};
+    data.forEach(r=>{
+      creatorCounts[r.creator||"Unassigned"]=(creatorCounts[r.creator||"Unassigned"]||0)+1;
+      platformCounts[r.platform||"Unassigned"]=(platformCounts[r.platform||"Unassigned"]||0)+1;
+      typeCounts[r.videoType||"Other"]=(typeCounts[r.videoType||"Other"]||0)+1;
+    });
+
+    const commonOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+
+    const creatorCtx=$("creatorChart").getContext("2d");
+    const platformCtx=$("platformChart").getContext("2d");
+    const typeCtx=$("typeChart").getContext("2d");
+
+    if(!creatorChartInstance){
+      creatorChartInstance=new Chart(creatorCtx,{
+        type:"bar",
+        data:{labels:Object.keys(creatorCounts),datasets:[{data:Object.values(creatorCounts),borderWidth:1,borderRadius:10,backgroundColor:"rgba(37,99,235,0.22)",borderColor:"rgba(37,99,235,0.75)"}]},
+        options:{...commonOpts,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+      });
+    }else{
+      creatorChartInstance.data.labels=Object.keys(creatorCounts);
+      creatorChartInstance.data.datasets[0].data=Object.values(creatorCounts);
+      creatorChartInstance.update();
+    }
+
+    if(!platformChartInstance){
+      platformChartInstance=new Chart(platformCtx,{
+        type:"bar",
+        data:{labels:Object.keys(platformCounts),datasets:[{data:Object.values(platformCounts),borderWidth:1,borderRadius:10,backgroundColor:"rgba(34,197,94,0.20)",borderColor:"rgba(34,197,94,0.75)"}]},
+        options:{...commonOpts,indexAxis:"y",scales:{x:{beginAtZero:true,ticks:{precision:0}}}}
+      });
+    }else{
+      platformChartInstance.data.labels=Object.keys(platformCounts);
+      platformChartInstance.data.datasets[0].data=Object.values(platformCounts);
+      platformChartInstance.update();
+    }
+
+    if(!typeChartInstance){
+      typeChartInstance=new Chart(typeCtx,{
+        type:"bar",
+        data:{labels:Object.keys(typeCounts),datasets:[{data:Object.values(typeCounts),borderWidth:1,borderRadius:10,backgroundColor:"rgba(124,58,237,0.18)",borderColor:"rgba(124,58,237,0.75)"}]},
+        options:{...commonOpts,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+      });
+    }else{
+      typeChartInstance.data.labels=Object.keys(typeCounts);
+      typeChartInstance.data.datasets[0].data=Object.values(typeCounts);
+      typeChartInstance.update();
+    }
+  }
+
+  function getStatusFilterLabel(val){
+    if(!val) return "all statuses";
+    if(val==="completed") return "completed only";
+    if(val==="in-progress") return "in-edit only";
+    if(val==="pending") return "pending/backlog only";
+    if(val==="other") return "other statuses";
+    return "all statuses";
+  }
+
+  function updateSummaryText(data,ctx){
+    const el=$("autoSummary");
+    if(!data.length){el.textContent="No content found for this combination of month and filters.";return;}
+    const total=data.length;
+    let completed=0;
+    const platformCounts={}, topicCounts={};
+    data.forEach(r=>{
+      if(COMPLETED_STATUSES.includes(normalizeStatus(r.status))) completed++;
+      const pl=r.platform||"Unassigned"; platformCounts[pl]=(platformCounts[pl]||0)+1;
+      const tp=r.topic||"Unspecified topic"; topicCounts[tp]=(topicCounts[tp]||0)+1;
+    });
+    const mainPlatform=Object.entries(platformCounts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    const topTopic=Object.entries(topicCounts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+
+    const creatorText=ctx.creator?` for <strong>${escapeHtml(ctx.creator)}</strong>`:"";
+    const statusText=getStatusFilterLabel(ctx.statusFilterVal);
+    const platformText=ctx.platformLabel?` on <strong>${escapeHtml(ctx.platformLabel)}</strong>`:(mainPlatform?`, mostly on <strong>${escapeHtml(mainPlatform)}</strong>`:"");
+    const dayText=selectedDayKey?` <strong>Day:</strong> ${selectedDayKey}.`:"";
+
+    el.innerHTML=
+      `In <strong>${ctx.monthLabel}</strong>${creatorText}, you have <strong>${total}</strong> items in this view, with `+
+      `<strong>${completed}</strong> completed (${Math.round((completed/total)*100)}%). `+
+      `Filters: <strong>${statusText}</strong>${platformText}.`+
+      (topTopic?` Top topic: <strong>${escapeHtml(topTopic)}</strong>.`:"")+dayText;
+  }
+
+  function escapeHtml(str){
+    return (str??"").toString()
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+  function escapeAttr(str){ return escapeHtml(str).replaceAll("`","&#096;"); }
+  function shorten(s,n){ s=(s??"").toString(); return s.length<=n?s:s.slice(0,n-1)+"…"; }
+  function isProbablyUrl(s){ try{ const u=new URL((s||"").trim()); return u.protocol==="http:"||u.protocol==="https:"; }catch{ return false; } }
+
+  async function init(){
+    allData=await fetchSheetData();
+    if(!allData.length) return;
+    buildFilters();
+    renderDashboard();
+  }
+  document.addEventListener("DOMContentLoaded", init);
+</script>
 </body>
-
 </html>
